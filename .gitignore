@@ -1,4 +1,3 @@
-gradle.properties
 *.iml
 .gradle
 /local.properties
@@ -15,4 +14,8 @@ gradle.properties
 .cxx
 local.properties
 INSTRUCCIONES_INICIO.md
-**/build/
+
+# Ignorar carpetas build generadas pero NO archivos build.gradle.kts
+app/build/
+build/
+!**/build.gradle.kts
