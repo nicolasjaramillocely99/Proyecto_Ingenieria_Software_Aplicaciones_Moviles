@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Vinilos</string>
+    <string name="albums_title">Álbumes</string>
+    <string name="artists_title">Artistas</string>
+    <string name="collectors_title">Coleccionistas</string>
+    <string name="my_collection_title">Mi Colección</string>
+    <string name="loading">Cargando...</string>
+    <string name="empty_albums">No hay álbumes disponibles</string>
+    <string name="error_loading_albums">Error al cargar los álbumes</string>
+    <string name="retry">Reintentar</string>
+    <string name="add_album">Agregar álbum</string>
+</resources>
