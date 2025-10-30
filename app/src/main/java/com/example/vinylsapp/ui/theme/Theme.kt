@@ -53,15 +53,23 @@ fun VinylsAppTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    // Siempre usar el esquema oscuro para mantener el estilo del diseño
-    val colorScheme = DarkColorScheme
+    val context = LocalContext.current
+    
+    // Determinar el esquema de color basado en los parámetros
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
     
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = VinylDark.toArgb()  // Barra de estado oscura
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
 
