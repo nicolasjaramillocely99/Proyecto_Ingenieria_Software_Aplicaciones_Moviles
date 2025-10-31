@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vinylsapp.ui.albums.AlbumListScreen
+import com.example.vinylsapp.ui.artists.ArtistListScreen
 
 /**
  * Composable principal que gestiona la navegación de la aplicación
@@ -49,7 +50,11 @@ fun VinylsApp() {
             
             // Pantalla de artistas (placeholder)
             composable(Screen.Artists.route) {
-                PlaceholderScreen(title = Screen.Artists.title)
+                ArtistListScreen(
+                    onArtistClick = { artistId ->
+                        navController.navigate(Screen.ArtistDetail.createRoute(artistId))
+                    }
+                )
             }
             
             // Pantalla de coleccionistas (placeholder)

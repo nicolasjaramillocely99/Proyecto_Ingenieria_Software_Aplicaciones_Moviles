@@ -46,6 +46,14 @@ sealed class Screen(
     ) {
         fun createRoute(albumId: Int) = "album/$albumId"
     }
+
+    object ArtistDetail : Screen(
+        route = "artists/{artistId}",
+        title = "Detalle del artista",
+        icon = Icons.Default.Person
+    ) {
+        fun createRoute(artistId: Int) = "artists/$artistId"
+    }
 }
 
 /**

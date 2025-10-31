@@ -1,6 +1,7 @@
 package com.example.vinylsapp.di
 
 import com.example.vinylsapp.data.network.AlbumApiService
+import com.example.vinylsapp.data.network.MusicianApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,5 +62,11 @@ object NetworkModule {
     @Singleton
     fun provideAlbumApiService(retrofit: Retrofit): AlbumApiService {
         return retrofit.create(AlbumApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideArtistApiService(retrofit: Retrofit): MusicianApiService {
+        return retrofit.create(MusicianApiService::class.java)
     }
 }

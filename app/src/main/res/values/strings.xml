@@ -7,6 +7,8 @@
     <string name="loading">Cargando...</string>
     <string name="empty_albums">No hay álbumes disponibles</string>
     <string name="error_loading_albums">Error al cargar los álbumes</string>
+    <string name="empty_artists">No hay artistas disponibles</string>
+    <string name="error_loading_artists">Error al cargar los artistas</string>
     <string name="retry">Reintentar</string>
     <string name="add_album">Agregar álbum</string>
 </resources>
