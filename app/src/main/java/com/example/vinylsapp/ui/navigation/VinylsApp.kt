@@ -71,6 +71,11 @@ fun VinylsApp() {
             composable(Screen.AlbumDetail.route) {
                 PlaceholderScreen(title = Screen.AlbumDetail.title)
             }
+
+            // Pantalla de detalle de artistas (placeholder)
+            composable(Screen.ArtistDetail.route) {
+                PlaceholderScreen(title = Screen.ArtistDetail.title)
+            }
         }
     }
 }

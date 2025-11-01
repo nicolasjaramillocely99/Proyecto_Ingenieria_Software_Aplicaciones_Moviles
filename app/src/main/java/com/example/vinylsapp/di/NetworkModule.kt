@@ -25,7 +25,7 @@ object NetworkModule {
     // Para emulador Android: http://10.0.2.2:3000/ (10.0.2.2 = localhost del host)
     // Para dispositivo físico: http://<IP_DE_TU_PC>:3000/ (reemplaza con tu IP local)
     // Ejemplo IP local: http://192.168.1.100:3000/
-    private const val BASE_URL = "http://10.0.2.2:3000/"
+    private const val BASE_URL = "https://backvynils-8c16.onrender.com/"
     
     @Provides
     @Singleton
