@@ -1,6 +1,6 @@
 # 🧪 Pruebas - Vinilos App
 
-Esta carpeta contiene todas las pruebas para la funcionalidad de **listar álbumes** de la aplicación Vinilos.
+Esta carpeta contiene todas las pruebas para las funcionalidades de **Álbumes** y **Artistas** de la aplicación Vinilos.
 
 ## 📁 Estructura de Pruebas
 
@@ -9,6 +9,8 @@ app/src/
 ├── test/                           # Pruebas Unitarias (JUnit)
 │   └── java/com/example/vinylsapp/
 │       ├── data/
+│       │   ├── network/
+│       │   │   └── AlbumApiServiceTest.kt    # Pruebas del API Service
 │       │   └── repository/
 │       │       └── AlbumRepositoryTest.kt    # Pruebas del Repository
 │       └── ui/
@@ -18,10 +20,13 @@ app/src/
 └── androidTest/                    # Pruebas de Instrumentación (Espresso + Compose)
     └── java/com/example/vinylsapp/
         ├── CustomTestRunner.kt               # Runner personalizado para Hilt
-        ├── AlbumListE2ETest.kt               # Pruebas End-to-End completas
+        ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes
+        ├── ArtistListE2ETest.kt              # Pruebas E2E de Artistas
         └── ui/
-            └── albums/
-                └── AlbumListScreenTest.kt    # Pruebas de UI de Compose
+            ├── albums/
+            │   └── AlbumListScreenTest.kt    # Pruebas UI de Álbumes
+            └── artists/
+                └── ArtistListScreenTest.kt   # Pruebas UI de Artistas
 ```
 
 ---
@@ -68,6 +73,26 @@ Ejecutan rápidamente en la JVM local sin necesitar un emulador.
 - Kotlin Coroutines Test
 - InstantTaskExecutorRule (LiveData/StateFlow)
 
+#### `AlbumApiServiceTest.kt`
+**Objetivo:** Verificar la integración con el API REST del backend.
+
+**Pruebas incluidas:**
+- ✅ Respuesta exitosa del servidor (HTTP 200)
+- ✅ Parseo correcto de múltiples álbumes
+- ✅ Manejo de arrays vacíos
+- ✅ Manejo de errores HTTP 404
+- ✅ Manejo de errores HTTP 500
+- ✅ Parseo de datos de performers
+- ✅ Manejo de performers nulos
+- ✅ Parseo de todos los campos JSON
+- ✅ Verificación de método HTTP GET
+- ✅ Verificación de endpoint correcto
+
+**Tecnologías:**
+- JUnit 4
+- MockWebServer (simulación de backend)
+- Retrofit
+
 ---
 
 ### 2. **Pruebas de UI con Compose** (`androidTest/`)
@@ -75,7 +100,7 @@ Ejecutan rápidamente en la JVM local sin necesitar un emulador.
 Requieren un emulador o dispositivo Android.
 
 #### `AlbumListScreenTest.kt`
-**Objetivo:** Verificar componentes individuales de Compose.
+**Objetivo:** Verificar componentes individuales de Compose para Álbumes.
 
 **Pruebas incluidas:**
 - ✅ Renderizado correcto del grid de álbumes
@@ -92,6 +117,22 @@ Requieren un emulador o dispositivo Android.
 - Compose UI Testing
 - JUnit 4
 
+#### `ArtistListScreenTest.kt`
+**Objetivo:** Verificar componentes individuales de Compose para Artistas.
+
+**Pruebas incluidas:**
+- ✅ Renderizado correcto del grid de artistas
+- ✅ Visualización de nombres de artistas
+- ✅ Callbacks de click en tarjetas
+- ✅ Indicador de carga (Loading)
+- ✅ Mensaje de error con botón de reintentar
+- ✅ Estado vacío (Empty)
+- ✅ Grid es scrollable
+
+**Tecnologías:**
+- Compose UI Testing
+- JUnit 4
+
 ---
 
 ### 3. **Pruebas End-to-End (E2E)** (`androidTest/`)
@@ -99,7 +140,7 @@ Requieren un emulador o dispositivo Android.
 Verifican el flujo completo de la aplicación.
 
 #### `AlbumListE2ETest.kt`
-**Objetivo:** Probar la app completa con integración real.
+**Objetivo:** Probar el módulo de Álbumes con integración real.
 
 **Pruebas incluidas:**
 - ✅ Visualización de lista al iniciar la app
@@ -108,6 +149,21 @@ Verifican el flujo completo de la aplicación.
 - ✅ Funcionalidad del botón de reintentar
 - ✅ Carga de imágenes
 - ✅ Layout correcto del grid
+
+**Tecnologías:**
+- Hilt Android Testing (inyección de dependencias)
+- Compose UI Testing
+- Espresso
+- JUnit 4
+
+#### `ArtistListE2ETest.kt`
+**Objetivo:** Probar el módulo de Artistas con integración real.
+
+**Pruebas incluidas:**
+- ✅ Visualización del botón de Artistas al iniciar
+- ✅ Carga de imágenes de artistas
+- ✅ Manejo de errores de red
+- ✅ Funcionalidad del botón de reintentar
 
 **Tecnologías:**
 - Hilt Android Testing (inyección de dependencias)
@@ -134,7 +190,7 @@ Desde Android Studio:
 
 **⚠️ Requisitos:**
 - Emulador de Android ejecutándose
-- Backend corriendo en `http://localhost:3000` (para E2E tests)
+- Backend corriendo en `https://backvynils-8c16.onrender.com/` (para E2E tests)
 
 Desde Android Studio:
 1. Inicia el emulador
