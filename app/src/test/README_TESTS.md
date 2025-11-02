@@ -103,9 +103,7 @@ Verifican el flujo completo de la aplicación.
 
 **Pruebas incluidas:**
 - ✅ Visualización de lista al iniciar la app
-- ✅ Navegación al hacer click en un álbum
 - ✅ Presencia del botón flotante (FAB)
-- ✅ Funcionalidad de scroll
 - ✅ Manejo de errores de red
 - ✅ Funcionalidad del botón de reintentar
 - ✅ Carga de imágenes
@@ -127,10 +125,6 @@ Desde Android Studio:
 1. Haz clic derecho en la carpeta `test/`
 2. Selecciona **Run 'Tests in app.test'**
 
-Desde terminal:
-```bash
-./gradlew test
-```
 
 **Resultado:** Se ejecutan en segundos sin necesidad de emulador.
 
@@ -147,11 +141,7 @@ Desde Android Studio:
 2. Haz clic derecho en la carpeta `androidTest/`
 3. Selecciona **Run 'Tests in app.androidTest'**
 
-Desde terminal:
-```bash
-# Asegúrate de que el emulador esté corriendo
-./gradlew connectedAndroidTest
-```
+
 
 **Resultado:** Se instala la app en el emulador y ejecuta las pruebas.
 
@@ -182,23 +172,7 @@ open app/build/reports/tests/testDebugUnitTest/index.html
 open app/build/reports/androidTests/connected/index.html
 ```
 
----
 
-## 🔧 Configuración Especial
-
-### CustomTestRunner
-Se usa un runner personalizado para integrar **Hilt** en las pruebas:
-
-```kotlin
-// app/build.gradle.kts
-defaultConfig {
-    testInstrumentationRunner = "com.example.vinylsapp.CustomTestRunner"
-}
-```
-
-Esto permite usar `@HiltAndroidTest` en las pruebas E2E.
-
----
 
 ## 🛠️ Tecnologías y Frameworks
 
@@ -214,45 +188,7 @@ Esto permite usar `@HiltAndroidTest` en las pruebas E2E.
 - **Hilt Testing**: Inyección de dependencias en pruebas
 - **MockWebServer**: Simular respuestas del backend (opcional)
 
----
 
-## 📝 Mejores Prácticas
-
-### ✅ DO (Hacer):
-- Ejecutar pruebas unitarias antes de hacer commit
-- Mantener las pruebas simples y enfocadas
-- Usar nombres descriptivos para los tests
-- Probar casos edge (listas vacías, errores, etc.)
-- Usar Given-When-Then en los comentarios
-
-### ❌ DON'T (No hacer):
-- No hacer las pruebas dependientes entre sí
-- No usar datos reales de producción en tests
-- No ignorar pruebas fallidas (`@Ignore`)
-- No hacer pruebas demasiado largas
-
----
-
-## 🐛 Troubleshooting
-
-### Error: "Cannot resolve symbol 'mockk'"
-**Solución:** Sincroniza Gradle (`File > Sync Project with Gradle Files`)
-
-### Error: "No tests were found"
-**Solución:** 
-1. Verifica que el archivo termine en `Test.kt`
-2. Asegúrate de que los métodos tengan `@Test`
-3. Invalida cachés: `File > Invalidate Caches / Restart`
-
-### E2E Tests fallan con "Connection refused"
-**Solución:** 
-1. Verifica que el backend esté corriendo
-2. Usa `http://10.0.2.2:3000` en el emulador (no `localhost`)
-
-### Error: "HiltTestApplication not found"
-**Solución:** Verifica que `testInstrumentationRunner` sea `CustomTestRunner`
-
----
 
 ## 📚 Referencias
 
@@ -277,16 +213,5 @@ Abre el reporte en:
 app/build/reports/coverage/test/debug/index.html
 ```
 
----
 
-## ✨ Contribuir
-
-Al agregar nuevas funcionalidades:
-1. Escribe primero las pruebas (TDD)
-2. Asegúrate de que todas las pruebas pasen
-3. Mantén un mínimo de 80% de cobertura
-4. Documenta casos edge específicos
-
----
-
-**Última actualización:** Noviembre 2025
+**Última actualización:** 02 Noviembre 2025
