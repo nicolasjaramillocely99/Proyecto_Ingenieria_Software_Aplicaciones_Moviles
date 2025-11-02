@@ -96,7 +96,7 @@ class ArtistRepositoryTest {
         repository.getMusicians().collect { emissions.add(it) }
         
         // Then: Debe haber 2 emisiones (Loading y Success)
-        assertEquals("Should emit Loading and Success", 3, emissions.size)
+        assertEquals("Should emit Loading and Success", 2, emissions.size)
         assertTrue("First should be Loading", emissions[0] is Result.Loading)
         assertTrue("Second should be Success", emissions[1] is Result.Success)
         
@@ -123,7 +123,7 @@ class ArtistRepositoryTest {
         repository.getMusicians().collect { emissions.add(it) }
         
         // Then: Debe emitir Loading y Error
-        assertEquals(3, emissions.size)
+        assertEquals(2, emissions.size)
         assertTrue("First should be Loading", emissions[0] is Result.Loading)
         assertTrue("Second should be Error", emissions[1] is Result.Error)
         
@@ -146,7 +146,7 @@ class ArtistRepositoryTest {
         repository.getMusicians().collect { emissions.add(it) }
         
         // Then: Debe emitir Loading y Error
-        assertEquals(3, emissions.size)
+        assertEquals(2, emissions.size)
         assertTrue("First should be Loading", emissions[0] is Result.Loading)
         assertTrue("Second should be Error", emissions[1] is Result.Error)
         
@@ -182,14 +182,14 @@ class ArtistRepositoryTest {
         // Given: API retorna un álbum específico
         val artist = testArtist[0]
         val successResponse = Response.success(artist)
-        coEvery { apiService.getMusicianById(1) } returns successResponse
+        coEvery { apiService.getMusicianById(100) } returns successResponse
         
         // When: Obtenemos el álbum
         val emissions = mutableListOf<Result<Musician>>()
-        repository.getMusicianById(1).collect { emissions.add(it) }
+        repository.getMusicianById(100).collect { emissions.add(it) }
         
         // Then: Debe retornar el músico correcto
-        assertEquals(3, emissions.size)
+        assertEquals(2, emissions.size)
         assertTrue("Second should be Success", emissions[1] is Result.Success)
         
         val successResult = emissions[1] as Result.Success
