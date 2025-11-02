@@ -16,7 +16,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.vinylsapp.ui.albums.AlbumListScreen
+import com.example.vinylsapp.ui.albums.AlbumViewModel
+import com.example.vinylsapp.ui.albums.CreateAlbumScreen
 import com.example.vinylsapp.ui.artists.ArtistListScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 
 /**
  * Composable principal que gestiona la navegación de la aplicación
@@ -37,13 +40,24 @@ fun VinylsApp() {
             modifier = Modifier.padding(innerPadding)
         ) {
             // Pantalla de álbumes
-            composable(Screen.Albums.route) {
+            composable(Screen.Albums.route) { backStackEntry ->
+                val viewModel: AlbumViewModel = hiltViewModel()
+                
+                // Recargar álbumes si se creó uno nuevo
+                androidx.compose.runtime.LaunchedEffect(backStackEntry.savedStateHandle.get<Boolean>("album_created")) {
+                    if (backStackEntry.savedStateHandle.get<Boolean>("album_created") == true) {
+                        viewModel.loadAlbums()
+                        backStackEntry.savedStateHandle.remove<Boolean>("album_created")
+                    }
+                }
+                
                 AlbumListScreen(
+                    viewModel = viewModel,
                     onAlbumClick = { albumId ->
                         navController.navigate(Screen.AlbumDetail.createRoute(albumId))
                     },
                     onAddAlbumClick = {
-                        // TODO: Navegar a pantalla de agregar álbum
+                        navController.navigate(Screen.CreateAlbum.route)
                     }
                 )
             }
@@ -75,6 +89,21 @@ fun VinylsApp() {
             // Pantalla de detalle de artistas (placeholder)
             composable(Screen.ArtistDetail.route) {
                 PlaceholderScreen(title = Screen.ArtistDetail.title)
+            }
+            
+            // Pantalla de crear álbum
+            composable(Screen.CreateAlbum.route) {
+                CreateAlbumScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onAlbumCreated = {
+                        // Obtener el backStackEntry de Albums y marcar que se creó un álbum
+                        navController.getBackStackEntry(Screen.Albums.route)
+                            .savedStateHandle["album_created"] = true
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }

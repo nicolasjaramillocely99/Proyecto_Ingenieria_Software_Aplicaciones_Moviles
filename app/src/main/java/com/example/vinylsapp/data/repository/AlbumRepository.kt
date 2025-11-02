@@ -1,6 +1,7 @@
 package com.example.vinylsapp.data.repository
 
 import com.example.vinylsapp.data.model.Album
+import com.example.vinylsapp.data.model.CreateAlbumRequest
 import com.example.vinylsapp.data.network.AlbumApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -70,6 +71,34 @@ class AlbumRepository @Inject constructor(
                 emit(Result.Error(
                     exception = Exception("Error ${response.code()}"),
                     message = "Error al cargar el álbum"
+                ))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(
+                exception = e,
+                message = "Error de conexión: ${e.localizedMessage}"
+            ))
+        }
+    }.flowOn(Dispatchers.IO)
+    
+    /**
+     * Crea un nuevo álbum
+     * 
+     * @param album Datos del álbum a crear
+     * @return Flow con Result que contiene el álbum creado o un error
+     */
+    fun createAlbum(album: CreateAlbumRequest): Flow<Result<Album>> = flow {
+        try {
+            emit(Result.Loading)
+            
+            val response = apiService.createAlbum(album)
+            
+            if (response.isSuccessful && response.body() != null) {
+                emit(Result.Success(response.body()!!))
+            } else {
+                emit(Result.Error(
+                    exception = Exception("Error ${response.code()}"),
+                    message = "Error al crear el álbum: ${response.message()}"
                 ))
             }
         } catch (e: Exception) {

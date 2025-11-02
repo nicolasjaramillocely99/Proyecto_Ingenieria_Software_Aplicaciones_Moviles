@@ -48,3 +48,16 @@ data class Performer(
     @SerializedName("description")
     val description: String? = null
 )
+
+/**
+ * Modelo de datos para crear un nuevo álbum
+ * No incluye el campo id ya que es generado por el backend
+ */
+data class CreateAlbumRequest(
+    val name: String,
+    val cover: String,
+    val releaseDate: String,
+    val description: String,
+    val genre: String,
+    val recordLabel: String
+)

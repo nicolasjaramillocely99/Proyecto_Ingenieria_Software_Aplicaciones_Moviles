@@ -54,6 +54,12 @@ sealed class Screen(
     ) {
         fun createRoute(artistId: Int) = "artists/$artistId"
     }
+    
+    object CreateAlbum : Screen(
+        route = "create_album",
+        title = "Crear Álbum",
+        icon = Icons.Default.Album
+    )
 }
 
 /**
