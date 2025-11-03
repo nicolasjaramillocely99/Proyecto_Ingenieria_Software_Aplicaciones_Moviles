@@ -32,6 +32,9 @@ class AlbumListE2ETest {
     val hiltRule = HiltAndroidRule(this)
     
     @get:Rule(order = 1)
+    val suppressInputManagerRule = SuppressInputManagerRule()
+    
+    @get:Rule(order = 2)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
     
     @Before

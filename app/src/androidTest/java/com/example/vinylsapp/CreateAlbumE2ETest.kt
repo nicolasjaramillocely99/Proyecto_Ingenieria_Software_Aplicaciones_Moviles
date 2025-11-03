@@ -24,7 +24,10 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CreateAlbumE2ETest {
     
-    @get:Rule
+    @get:Rule(order = 0)
+    val suppressInputManagerRule = SuppressInputManagerRule()
+    
+    @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
     
     /**
