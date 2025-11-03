@@ -1,6 +1,7 @@
 package com.example.vinylsapp.data.repository
 
 import com.example.vinylsapp.data.model.Album
+import com.example.vinylsapp.data.model.CreateAlbumRequest
 import com.example.vinylsapp.data.model.Performer
 import com.example.vinylsapp.data.network.AlbumApiService
 import io.mockk.coEvery
@@ -228,5 +229,126 @@ class AlbumRepositoryTest {
         
         // Then: Debe emitir Error
         assertTrue("Should emit Error", emissions[1] is Result.Error)
+    }
+    
+    /**
+     * Test: Verificar que createAlbum emite Loading y luego Success cuando es exitoso
+     */
+    @Test
+    fun `createAlbum emits Loading then Success when creation is successful`() = runTest {
+        // Given: Request válido y API retorna respuesta exitosa
+        val createRequest = CreateAlbumRequest(
+            name = "Test Album",
+            cover = "https://example.com/cover.jpg",
+            releaseDate = "2024-01-15",
+            description = "Test description",
+            genre = "Rock",
+            recordLabel = "Sony Music"
+        )
+        
+        val createdAlbum = Album(
+            id = 1,
+            name = "Test Album",
+            cover = "https://example.com/cover.jpg",
+            releaseDate = "2024-01-15",
+            description = "Test description",
+            genre = "Rock",
+            recordLabel = "Sony Music",
+            performers = null
+        )
+        
+        val successResponse = Response.success(createdAlbum)
+        coEvery { apiService.createAlbum(any()) } returns successResponse
+        
+        // When: Creamos el álbum
+        val emissions = mutableListOf<Result<Album>>()
+        repository.createAlbum(createRequest).collect { emissions.add(it) }
+        
+        // Then: Debe emitir Loading y Success
+        assertEquals("Should emit Loading and Success", 2, emissions.size)
+        assertTrue("First should be Loading", emissions[0] is Result.Loading)
+        assertTrue("Second should be Success", emissions[1] is Result.Success)
+        
+        val successResult = emissions[1] as Result.Success
+        assertEquals("Album name should match", "Test Album", successResult.data.name)
+        assertEquals("Album id should be 1", 1, successResult.data.id)
+    }
+    
+    /**
+     * Test: Verificar que createAlbum maneja errores HTTP correctamente
+     */
+    @Test
+    fun `createAlbum emits Error when API returns error code`() = runTest {
+        // Given: Request válido y API retorna error 400
+        val createRequest = CreateAlbumRequest(
+            name = "Test Album",
+            cover = "invalid-url",
+            releaseDate = "2024-01-15",
+            description = "Test description",
+            genre = "Rock",
+            recordLabel = "Sony Music"
+        )
+        
+        val errorResponse = Response.error<Album>(
+            400,
+            """{"message": ["cover must be a URL"]}""".toResponseBody(null)
+        )
+        coEvery { apiService.createAlbum(any()) } returns errorResponse
+        
+        // When: Intentamos crear el álbum
+        val emissions = mutableListOf<Result<Album>>()
+        repository.createAlbum(createRequest).collect { emissions.add(it) }
+        
+        // Then: Debe emitir Loading y Error
+        assertEquals("Should emit Loading and Error", 2, emissions.size)
+        assertTrue("First should be Loading", emissions[0] is Result.Loading)
+        assertTrue("Second should be Error", emissions[1] is Result.Error)
+        
+        val errorResult = emissions[1] as Result.Error
+        assertNotNull("Error should have a message", errorResult.message)
+        assertTrue("Error should have a non-empty message", 
+            errorResult.message != null && errorResult.message!!.isNotBlank())
+        // The error message should contain information about the validation error
+        // It can be the extracted message ("cover must be a URL") or a formatted error
+        assertTrue("Error message should mention the issue or be a validation error", 
+            errorResult.message?.contains("cover") == true || 
+            errorResult.message?.contains("URL") == true ||
+            errorResult.message?.contains("400") == true || 
+            errorResult.message?.contains("validación") == true ||
+            errorResult.message?.contains("error") == true)
+    }
+    
+    /**
+     * Test: Verificar que createAlbum maneja excepciones de red
+     */
+    @Test
+    fun `createAlbum emits Error when network exception occurs`() = runTest {
+        // Given: Request válido y API lanza excepción de red
+        val createRequest = CreateAlbumRequest(
+            name = "Test Album",
+            cover = "https://example.com/cover.jpg",
+            releaseDate = "2024-01-15",
+            description = "Test description",
+            genre = "Rock",
+            recordLabel = "Sony Music"
+        )
+        
+        val networkException = java.io.IOException("Network unavailable")
+        coEvery { apiService.createAlbum(any()) } throws networkException
+        
+        // When: Intentamos crear el álbum
+        val emissions = mutableListOf<Result<Album>>()
+        repository.createAlbum(createRequest).collect { emissions.add(it) }
+        
+        // Then: Debe emitir Loading y Error
+        assertEquals("Should emit Loading and Error", 2, emissions.size)
+        assertTrue("First should be Loading", emissions[0] is Result.Loading)
+        assertTrue("Second should be Error", emissions[1] is Result.Error)
+        
+        val errorResult = emissions[1] as Result.Error
+        assertNotNull("Error should have an exception", errorResult.exception)
+        assertTrue("Error message should mention connection", 
+            errorResult.message?.contains("conexión", ignoreCase = true) == true ||
+            errorResult.message?.contains("conexion", ignoreCase = true) == true)
     }
 }

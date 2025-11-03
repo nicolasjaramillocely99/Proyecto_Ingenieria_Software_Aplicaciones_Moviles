@@ -1,6 +1,5 @@
 package com.example.vinylsapp.data.repository
 
-import android.util.Log
 import com.example.vinylsapp.data.model.Album
 import com.example.vinylsapp.data.model.CreateAlbumRequest
 import com.example.vinylsapp.data.network.AlbumApiService
@@ -11,6 +10,27 @@ import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
+
+/**
+ * Simple logging utility that works in both unit tests and Android runtime
+ */
+internal object RepositoryLogger {
+    fun e(tag: String, message: String, throwable: Throwable? = null) {
+        try {
+            android.util.Log.e(tag, message, throwable)
+        } catch (e: RuntimeException) {
+            // Ignore if Log is not available (e.g., in unit tests)
+        }
+    }
+    
+    fun d(tag: String, message: String) {
+        try {
+            android.util.Log.d(tag, message)
+        } catch (e: RuntimeException) {
+            // Ignore if Log is not available (e.g., in unit tests)
+        }
+    }
+}
 
 /**
  * Repository Pattern: AlbumRepository
@@ -101,15 +121,15 @@ class AlbumRepository @Inject constructor(
                 // Intentar obtener el mensaje de error del body de la respuesta
                 val errorBody = response.errorBody()?.string()
                 
-                Log.e("AlbumRepository", "=== CREATE ALBUM ERROR ===")
-                Log.e("AlbumRepository", "Status Code: ${response.code()}")
-                Log.e("AlbumRepository", "Status Message: ${response.message()}")
-                Log.e("AlbumRepository", "Error Body Raw: $errorBody")
+                RepositoryLogger.e("AlbumRepository", "=== CREATE ALBUM ERROR ===")
+                RepositoryLogger.e("AlbumRepository", "Status Code: ${response.code()}")
+                RepositoryLogger.e("AlbumRepository", "Status Message: ${response.message()}")
+                RepositoryLogger.e("AlbumRepository", "Error Body Raw: $errorBody")
                 
                 val errorMessage = if (errorBody != null && errorBody.isNotBlank()) {
                     // Intentar extraer mensaje útil del error body
                     val extracted = extractErrorMessage(errorBody)
-                    Log.e("AlbumRepository", "Extracted message: $extracted")
+                    RepositoryLogger.e("AlbumRepository", "Extracted message: $extracted")
                     
                     if (extracted != null && extracted.isNotBlank() && extracted != "ValidationError" && !extracted.contains("ValidationError:")) {
                         extracted
@@ -131,7 +151,7 @@ class AlbumRepository @Inject constructor(
                     "Error ${response.code()}: ${response.message()}"
                 }
                 
-                Log.e("AlbumRepository", "Final error message: $errorMessage")
+                RepositoryLogger.e("AlbumRepository", "Final error message: $errorMessage")
                 
                 emit(Result.Error(
                     exception = Exception("Error ${response.code()}"),
@@ -142,14 +162,14 @@ class AlbumRepository @Inject constructor(
             // Manejar excepciones HTTP específicas
             val errorBody = e.response()?.errorBody()?.string()
             
-            Log.e("AlbumRepository", "=== HTTP EXCEPTION ===")
-            Log.e("AlbumRepository", "Status Code: ${e.code()}")
-            Log.e("AlbumRepository", "Status Message: ${e.message()}")
-            Log.e("AlbumRepository", "Error Body Raw: $errorBody")
+            RepositoryLogger.e("AlbumRepository", "=== HTTP EXCEPTION ===")
+            RepositoryLogger.e("AlbumRepository", "Status Code: ${e.code()}")
+            RepositoryLogger.e("AlbumRepository", "Status Message: ${e.message()}")
+            RepositoryLogger.e("AlbumRepository", "Error Body Raw: $errorBody")
             
             val errorMessage = if (errorBody != null && errorBody.isNotBlank()) {
                 val extracted = extractErrorMessage(errorBody)
-                Log.e("AlbumRepository", "Extracted message: $extracted")
+                RepositoryLogger.e("AlbumRepository", "Extracted message: $extracted")
                 
                 if (extracted != null && extracted.isNotBlank() && extracted != "ValidationError" && !extracted.contains("ValidationError:")) {
                     extracted
@@ -159,7 +179,7 @@ class AlbumRepository @Inject constructor(
                         formatted
                     } else {
                         // Fallback: Si es un error de validación, dar un mensaje más útil
-                        if (errorBody?.contains("ValidationError", ignoreCase = true) == true || e.code() == 400) {
+                        if (errorBody.contains("ValidationError", ignoreCase = true) || e.code() == 400) {
                             "Error de validación: Verifica que todos los campos sean correctos. El URL de la portada debe comenzar con http:// o https://"
                         } else {
                             "Error ${e.code()}: ${e.message()}"
@@ -170,14 +190,14 @@ class AlbumRepository @Inject constructor(
                 "Error ${e.code()}: ${e.message()}"
             }
             
-            Log.e("AlbumRepository", "Final error message: $errorMessage", e)
+            RepositoryLogger.e("AlbumRepository", "Final error message: $errorMessage", e)
             
             emit(Result.Error(
                 exception = e,
                 message = errorMessage
             ))
         } catch (e: Exception) {
-            Log.e("AlbumRepository", "Exception creating album", e)
+            RepositoryLogger.e("AlbumRepository", "Exception creating album", e)
             emit(Result.Error(
                 exception = e,
                 message = "Error de conexión: ${e.message ?: e.localizedMessage ?: "Error desconocido"}"
@@ -191,7 +211,7 @@ class AlbumRepository @Inject constructor(
     private fun extractErrorMessage(errorBody: String): String? {
         return try {
             // Log the full error body for debugging
-            Log.d("AlbumRepository", "Full error body: $errorBody")
+            RepositoryLogger.d("AlbumRepository", "Full error body: $errorBody")
             
             // Intentar extraer campos comunes de error como "message", "error", "detail"
             when {
@@ -251,7 +271,7 @@ class AlbumRepository @Inject constructor(
                 else -> null
             }
         } catch (e: Exception) {
-            Log.e("AlbumRepository", "Error extracting error message", e)
+            RepositoryLogger.e("AlbumRepository", "Error extracting error message", e)
             null
         }
     }
@@ -293,7 +313,7 @@ class AlbumRepository @Inject constructor(
                 null
             }
         } catch (e: Exception) {
-            Log.e("AlbumRepository", "Error formatting error for display", e)
+            RepositoryLogger.e("AlbumRepository", "Error formatting error for display", e)
             null
         }
     }
@@ -328,7 +348,7 @@ class AlbumRepository @Inject constructor(
                 null
             }
         } catch (e: Exception) {
-            Log.e("AlbumRepository", "Error extracting nested validation messages", e)
+            RepositoryLogger.e("AlbumRepository", "Error extracting nested validation messages", e)
             null
         }
     }
