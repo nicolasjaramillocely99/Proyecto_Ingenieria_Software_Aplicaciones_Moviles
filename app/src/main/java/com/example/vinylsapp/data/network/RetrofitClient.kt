@@ -13,9 +13,10 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     
     // URL base del backend - Cambia esto según tu configuración
-    // Si usas emulador de Android: http://10.0.2.2:3000/
+    // Render hosted backend: https://backvynils-8c16.onrender.com/
+    // Si usas emulador de Android con backend local: http://10.0.2.2:3000/
     // Si usas dispositivo físico en la misma red: http://<IP_DE_TU_PC>:3000/
-    private const val BASE_URL = "http://10.0.2.2:3000/"
+    private const val BASE_URL = "https://backvynils-8c16.onrender.com/"
     
     /**
      * Interceptor para logging de peticiones HTTP (útil para debugging)
