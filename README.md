@@ -121,7 +121,7 @@ La aplicación se compilará, instalará y ejecutará automáticamente.
 
 
 # 🧪 Pruebas - Vinilos App
-
+El documento de estrategia de pruebas y arquitectura de la aplicacion se encuentra en la pagina sprint 01 en la wiki del repositorio
 
 ## 📁 Estructura de Pruebas
 
