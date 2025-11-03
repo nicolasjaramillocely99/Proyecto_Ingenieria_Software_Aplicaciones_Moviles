@@ -97,13 +97,15 @@ Gradle descargará automáticamente todas las dependencias necesarias:
 1. En **Device Manager**, haz clic en ▶️ junto a tu emulador
 2. Espera a que el emulador inicie completamente
 
-#### **Paso 3: Ejecutar la Aplicación**
+#### **Paso 7: Ejecutar la Aplicación**
 
 1. Haz clic en el botón **Run** (▶️) en la barra superior de Android Studio
 2. Selecciona tu emulador de la lista
 3. Haz clic en **OK**
 
 La aplicación se compilará, instalará y ejecutará automáticamente.
+
+#### **Paso 8: **Alternativa local** En la raiz del proyecto tambien se encuentra un archivo apk para su instalacion en dispositivos fisicos **
 
 
 ## 🛠️ Tecnologías Utilizadas
