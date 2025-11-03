@@ -111,24 +111,26 @@ fun CreateAlbumScreen(
                 }
             )
             
-            // Campo: Género
-            OutlinedTextField(
-                value = uiState.genre,
-                onValueChange = viewModel::updateGenre,
-                label = { Text(stringResource(R.string.genre)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                enabled = !uiState.isLoading
+            // Campo: Género (Dropdown)
+            GenreDropdown(
+                selectedGenre = uiState.genre,
+                onGenreSelected = viewModel::updateGenre,
+                enabled = !uiState.isLoading,
+                isExpanded = uiState.isGenreDropdownExpanded,
+                onExpandedChange = { expanded ->
+                    viewModel.setGenreDropdownExpanded(expanded)
+                }
             )
             
-            // Campo: Discográfica
-            OutlinedTextField(
-                value = uiState.recordLabel,
-                onValueChange = viewModel::updateRecordLabel,
-                label = { Text(stringResource(R.string.record_label)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                enabled = !uiState.isLoading
+            // Campo: Discográfica (Dropdown)
+            RecordLabelDropdown(
+                selectedRecordLabel = uiState.recordLabel,
+                onRecordLabelSelected = viewModel::updateRecordLabel,
+                enabled = !uiState.isLoading,
+                isExpanded = uiState.isRecordLabelDropdownExpanded,
+                onExpandedChange = { expanded ->
+                    viewModel.setRecordLabelDropdownExpanded(expanded)
+                }
             )
             
             // Campo: Descripción
@@ -172,3 +174,106 @@ fun CreateAlbumScreen(
     }
 }
 
+/**
+ * Dropdown menu para seleccionar el género
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GenreDropdown(
+    selectedGenre: String,
+    onGenreSelected: (String) -> Unit,
+    enabled: Boolean,
+    isExpanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit
+) {
+    val genreOptions = CreateAlbumUiState.genreOptions
+    
+    ExposedDropdownMenuBox(
+        expanded = isExpanded,
+        onExpandedChange = { onExpandedChange(!isExpanded) },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            value = selectedGenre,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.genre)) },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+            },
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth(),
+            enabled = enabled,
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+        )
+        
+        ExposedDropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { onExpandedChange(false) }
+        ) {
+            genreOptions.forEach { genreOption ->
+                DropdownMenuItem(
+                    text = { Text(genreOption) },
+                    onClick = {
+                        onGenreSelected(genreOption)
+                        onExpandedChange(false)
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Dropdown menu para seleccionar la discográfica
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RecordLabelDropdown(
+    selectedRecordLabel: String,
+    onRecordLabelSelected: (String) -> Unit,
+    enabled: Boolean,
+    isExpanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit
+) {
+    val recordLabelOptions = CreateAlbumUiState.recordLabelOptions
+    
+    ExposedDropdownMenuBox(
+        expanded = isExpanded,
+        onExpandedChange = { onExpandedChange(!isExpanded) },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            value = selectedRecordLabel,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.record_label)) },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+            },
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth(),
+            enabled = enabled,
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+        )
+        
+        ExposedDropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { onExpandedChange(false) }
+        ) {
+            recordLabelOptions.forEach { recordLabelOption ->
+                DropdownMenuItem(
+                    text = { Text(recordLabelOption) },
+                    onClick = {
+                        onRecordLabelSelected(recordLabelOption)
+                        onExpandedChange(false)
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                )
+            }
+        }
+    }
+}

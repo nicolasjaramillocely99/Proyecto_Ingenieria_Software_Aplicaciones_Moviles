@@ -13,7 +13,9 @@ data class CreateAlbumUiState(
     val recordLabel: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isSuccess: Boolean = false
+    val isSuccess: Boolean = false,
+    val isGenreDropdownExpanded: Boolean = false,
+    val isRecordLabelDropdownExpanded: Boolean = false
 ) {
     /**
      * Valida si el formulario está completo y válido
@@ -25,6 +27,14 @@ data class CreateAlbumUiState(
                 description.isNotBlank() &&
                 genre.isNotBlank() &&
                 recordLabel.isNotBlank()
+    }
+    
+    /**
+     * Opciones válidas de género según el backend
+     */
+    companion object {
+        val genreOptions = listOf("Classical", "Salsa", "Rock", "Folk")
+        val recordLabelOptions = listOf("Sony Music", "EMI", "Discos Fuentes", "Elektra", "Fania Records")
     }
 }
 

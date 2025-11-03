@@ -64,10 +64,24 @@ class CreateAlbumViewModel @Inject constructor(
     }
     
     /**
+     * Controla el estado de expansión del dropdown de género
+     */
+    fun setGenreDropdownExpanded(expanded: Boolean) {
+        _uiState.update { it.copy(isGenreDropdownExpanded = expanded) }
+    }
+    
+    /**
      * Actualiza la discográfica
      */
     fun updateRecordLabel(recordLabel: String) {
         _uiState.update { it.copy(recordLabel = recordLabel, error = null) }
+    }
+    
+    /**
+     * Controla el estado de expansión del dropdown de discográfica
+     */
+    fun setRecordLabelDropdownExpanded(expanded: Boolean) {
+        _uiState.update { it.copy(isRecordLabelDropdownExpanded = expanded) }
     }
     
     /**
