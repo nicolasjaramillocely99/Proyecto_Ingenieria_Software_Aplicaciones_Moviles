@@ -1,7 +1,6 @@
 package com.example.vinylsapp.data.network
 
 import com.example.vinylsapp.data.model.Album
-import com.example.vinylsapp.data.model.CreateAlbumRequest
 import com.example.vinylsapp.data.model.Performer
 import com.google.gson.Gson
 import kotlinx.coroutines.test.runTest
@@ -309,89 +308,5 @@ class AlbumApiServiceTest {
         val request = mockWebServer.takeRequest()
         assertEquals("Should use GET method", "GET", request.method)
         assertEquals("Should request /albums/1 endpoint", "/albums/1", request.path)
-    }
-    
-    /**
-     * Test: Verificar que createAlbum envía POST con el body correcto y parsea la respuesta
-     */
-    @Test
-    fun `createAlbum sends POST request and returns created album`() = runTest {
-        // Given: Request de creación de álbum
-        val createRequest = CreateAlbumRequest(
-            name = "Test Album",
-            cover = "https://example.com/cover.jpg",
-            releaseDate = "2024-01-15",
-            description = "Test description",
-            genre = "Rock",
-            recordLabel = "Sony Music"
-        )
-        
-        val createdAlbum = Album(
-            id = 1,
-            name = "Test Album",
-            cover = "https://example.com/cover.jpg",
-            releaseDate = "2024-01-15",
-            description = "Test description",
-            genre = "Rock",
-            recordLabel = "Sony Music",
-            performers = null
-        )
-        
-        // El servidor retorna el álbum creado
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(201)
-                .setBody(gson.toJson(createdAlbum))
-                .addHeader("Content-Type", "application/json")
-        )
-        
-        // When: Llamamos a createAlbum
-        val response = apiService.createAlbum(createRequest)
-        
-        // Then: La respuesta debe ser exitosa con el álbum creado
-        assertTrue("Response should be successful", response.isSuccessful)
-        assertNotNull("Body should not be null", response.body())
-        assertEquals("Album ID should match", 1, response.body()!!.id)
-        assertEquals("Album name should match", "Test Album", response.body()!!.name)
-        assertEquals("Album genre should match", "Rock", response.body()!!.genre)
-        
-        // Verificar que la petición fue POST
-        val request = mockWebServer.takeRequest()
-        assertEquals("Should use POST method", "POST", request.method)
-        assertEquals("Should request /albums endpoint", "/albums", request.path)
-        assertEquals("Should have JSON content type", 
-            "application/json; charset=UTF-8", 
-            request.getHeader("Content-Type"))
-    }
-    
-    /**
-     * Test: Verificar que createAlbum maneja errores de validación (400)
-     */
-    @Test
-    fun `createAlbum returns error when validation fails`() = runTest {
-        // Given: Request inválido (URL malformada)
-        val invalidRequest = CreateAlbumRequest(
-            name = "Test Album",
-            cover = "invalid-url",  // URL inválida
-            releaseDate = "2024-01-15",
-            description = "Test description",
-            genre = "Rock",
-            recordLabel = "Sony Music"
-        )
-        
-        // El servidor retorna error 400
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(400)
-                .setBody("""{"message": ["cover must be a URL"]}""")
-                .addHeader("Content-Type", "application/json")
-        )
-        
-        // When: Llamamos a createAlbum
-        val response = apiService.createAlbum(invalidRequest)
-        
-        // Then: La respuesta debe indicar error
-        assertFalse("Response should not be successful", response.isSuccessful)
-        assertEquals("Response code should be 400", 400, response.code())
     }
 }

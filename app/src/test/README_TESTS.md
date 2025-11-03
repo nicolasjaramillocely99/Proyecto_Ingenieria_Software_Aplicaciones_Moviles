@@ -1,6 +1,6 @@
 # 🧪 Pruebas - Vinilos App
 
-Esta carpeta contiene todas las pruebas para las funcionalidades de **Álbumes** y **Artistas** de la aplicación Vinilos.
+Esta carpeta contiene todas las pruebas para las funcionalidades de **Álbumes** (listar y crear) y **Artistas** de la aplicación Vinilos.
 
 ## 📁 Estructura de Pruebas
 
@@ -15,18 +15,21 @@ app/src/
 │       │       └── AlbumRepositoryTest.kt    # Pruebas del Repository
 │       └── ui/
 │           └── albums/
-│               └── AlbumViewModelTest.kt     # Pruebas del ViewModel
+│               ├── AlbumViewModelTest.kt          # Pruebas del ViewModel (listar)
+│               └── CreateAlbumViewModelTest.kt    # Pruebas del ViewModel (crear)
 │
 └── androidTest/                    # Pruebas de Instrumentación (Espresso + Compose)
     └── java/com/example/vinylsapp/
         ├── CustomTestRunner.kt               # Runner personalizado para Hilt
-        ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes
+        ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes (listar)
+        ├── CreateAlbumE2ETest.kt             # Pruebas E2E de Álbumes (crear)
         ├── ArtistListE2ETest.kt              # Pruebas E2E de Artistas
         └── ui/
             ├── albums/
-            │   └── AlbumListScreenTest.kt    # Pruebas UI de Álbumes
+            │   ├── AlbumListScreenTest.kt       # Pruebas UI de Álbumes (listar)
+            │   └── CreateAlbumScreenTest.kt     # Pruebas UI de Álbumes (crear)
             └── artists/
-                └── ArtistListScreenTest.kt   # Pruebas UI de Artistas
+                └── ArtistListScreenTest.kt      # Pruebas UI de Artistas
 ```
 
 ---
@@ -93,6 +96,25 @@ Ejecutan rápidamente en la JVM local sin necesitar un emulador.
 - MockWebServer (simulación de backend)
 - Retrofit
 
+#### `CreateAlbumViewModelTest.kt`
+**Objetivo:** Verificar la lógica de creación de álbumes y validación de formulario.
+
+**Pruebas incluidas:**
+- ✅ Estado inicial vacío
+- ✅ Actualización de campos individuales (nombre, portada, fecha, descripción, género, sello)
+- ✅ Validación de formulario incompleto
+- ✅ Validación de formulario completo
+- ✅ Creación exitosa emite Loading → Success
+- ✅ Manejo de errores en creación
+- ✅ Limpieza de mensajes de error
+- ✅ Reseteo completo del formulario
+
+**Tecnologías:**
+- JUnit 4
+- MockK (mocking)
+- Kotlin Coroutines Test
+- InstantTaskExecutorRule (LiveData/StateFlow)
+
 ---
 
 ### 2. **Pruebas de UI con Compose** (`androidTest/`)
@@ -133,6 +155,26 @@ Requieren un emulador o dispositivo Android.
 - Compose UI Testing
 - JUnit 4
 
+#### `CreateAlbumScreenTest.kt`
+**Objetivo:** Verificar componentes del formulario de creación de álbumes.
+
+**Pruebas incluidas:**
+- ✅ Visualización de todos los campos del formulario
+- ✅ Campos de texto permiten entrada
+- ✅ Dropdown de género muestra todas las opciones
+- ✅ Dropdown de género permite selección
+- ✅ Dropdown de sello discográfico muestra opciones
+- ✅ Dropdown de sello permite selección
+- ✅ Botón crear deshabilitado con formulario vacío
+- ✅ Mensajes de error se muestran correctamente
+- ✅ Botón de retroceso existe
+- ✅ Título de pantalla correcto
+- ✅ Campo de fecha muestra formato esperado
+
+**Tecnologías:**
+- Compose UI Testing
+- JUnit 4
+
 ---
 
 ### 3. **Pruebas End-to-End (E2E)** (`androidTest/`)
@@ -164,6 +206,23 @@ Verifican el flujo completo de la aplicación.
 - ✅ Carga de imágenes de artistas
 - ✅ Manejo de errores de red
 - ✅ Funcionalidad del botón de reintentar
+
+**Tecnologías:**
+- Hilt Android Testing (inyección de dependencias)
+- Compose UI Testing
+- Espresso
+- JUnit 4
+
+#### `CreateAlbumE2ETest.kt`
+**Objetivo:** Probar el flujo completo de creación de álbumes.
+
+**Pruebas incluidas:**
+- ✅ Pantalla muestra todos los campos
+- ✅ Todos los campos pueden ser llenados
+- ✅ Botón crear se habilita cuando formulario está completo
+- ✅ Dropdowns muestran opciones correctas
+- ✅ Botón de retroceso navega hacia atrás
+- ✅ Campo fecha muestra hint de formato
 
 **Tecnologías:**
 - Hilt Android Testing (inyección de dependencias)
