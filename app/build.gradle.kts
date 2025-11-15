@@ -17,6 +17,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "com.example.vinylsapp.CustomTestRunner"
+        testInstrumentationRunnerArguments.put("disableAnalytics", "true")
+        testInstrumentationRunnerArguments.put("useTestStorageService", "true")
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -30,6 +32,13 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+    
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+        animationsDisabled = true
     }
     
     compileOptions {
@@ -106,6 +115,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test:rules:1.5.0")
+    // Note: Espresso is required by Compose UI Testing but InputManager may fail
+    // We handle this in EspressoTestRule
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")

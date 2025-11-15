@@ -30,10 +30,6 @@ Antes de comenzar, asegúrate de tener instalado lo siguiente:
      - Android SDK Platform-Tools
      - Emulador de Android
 
-### 3. **Docker Desktop** (para el backend)
-   - [Descargar Docker Desktop](https://www.docker.com/products/docker-desktop/)
-   - O **Node.js** (v18 o superior) si prefieres ejecutar sin Docker
-
 ### 4. **Git** (para clonar el repositorio)
    - [Descargar Git](https://git-scm.com/downloads)
 
@@ -51,83 +47,20 @@ git clone https://github.com/nicolasjaramillocely99/Proyecto_Ingenieria_Software
 cd Proyecto_Ingenieria_Software_Aplicaciones_Moviles
 ```
 
-### **Paso 2: Verificar la Estructura del Proyecto**
-
-Asegúrate de que tienes la siguiente estructura:
-
-```
-Proyecto_Ingenieria_Software_Aplicaciones_Moviles/
-├── app/                    # Código de la aplicación Android
-├── gradle/                 # Configuración de Gradle
-├── build.gradle.kts        # Configuración del proyecto
-├── settings.gradle.kts
-└── README.md
-```
-
-Y en el directorio padre:
-
-```
-Proyecto_1/
-├── Proyecto_Ingenieria_Software_Aplicaciones_Moviles/  # App Android
-└── back/BackVynils/        # Backend (NestJS)
-```
-
----
-
 ## � Configuración del Backend
 
-La aplicación necesita el backend ejecutándose para funcionar. Sigue estos pasos:
-
-### **Opción A: Usar Docker (Recomendado)**
-
-#### **Paso 1: Navegar al directorio del backend**
-
-```bash
-cd ../back/BackVynils
-```
-
-#### **Paso 2: Iniciar el backend con Docker Compose**
-
-```bash
-# Construye e inicia los contenedores
-docker-compose up -d
-
-# Verifica que los contenedores estén corriendo
-docker ps
-```
-
-Deberías ver dos contenedores:
-- `backvynils-app` (Backend NestJS) - Puerto 3000
-- `backvynils-postgres` (Base de datos PostgreSQL) - Puerto 5432
-
-#### **Paso 3: Verificar que el backend está funcionando**
-
-Abre tu navegador y ve a:
-```
-http://localhost:3000/albums
-```
-
-Deberías ver una respuesta JSON con la lista de álbumes.
-
-#### **Paso 4: Detener el backend (cuando termines)**
-
-```bash
-docker-compose down
-```
-
----
-
+La aplicación necesita el backend ejecutándose para funcionar. Este se encuentra ya configurado en la aplicacion y se esta ejecutando en el enlace :  https://backvynils-8c16.onrender.com/
 
 ## 🔧 Configuración de Android Studio
 
-### **Paso 1: Abrir el Proyecto en Android Studio**
+### **Paso 2: Abrir el Proyecto en Android Studio**
 
 1. Abre **Android Studio**
 2. Selecciona **Open** (Abrir)
 3. Navega a la carpeta `Proyecto_Ingenieria_Software_Aplicaciones_Moviles`
 4. Haz clic en **OK**
 
-### **Paso 2: Sincronizar Gradle**
+### **Paso 3: Sincronizar Gradle**
 
 Android Studio sincronizará automáticamente el proyecto con Gradle. Esto puede tomar algunos minutos la primera vez.
 
@@ -135,10 +68,6 @@ Android Studio sincronizará automáticamente el proyecto con Gradle. Esto puede
 - Ve a `File > Invalidate Caches / Restart`
 - Selecciona `Invalidate and Restart`
 
-### **Paso 3: Verificar la Configuración de JDK**
-
-1. Ve a `File > Project Structure > SDK Location`
-2. Asegúrate de que **Gradle JDK** esté configurado en **JDK 17** o superior
 
 ### **Paso 4: Descargar Dependencias**
 
@@ -155,9 +84,7 @@ Gradle descargará automáticamente todas las dependencias necesarias:
 
 ## 📱 Ejecución de la Aplicación
 
-### **Opción 1: Ejecutar en un Emulador**
-
-#### **Paso 1: Crear un Emulador (si no tienes uno)**
+#### **Paso 5: Crear un Emulador (si no tienes uno)**
 
 1. En Android Studio, haz clic en **Device Manager** (ícono de teléfono)
 2. Haz clic en **Create Device**
@@ -165,12 +92,12 @@ Gradle descargará automáticamente todas las dependencias necesarias:
 4. Selecciona una imagen del sistema (recomendado: **API 33** o superior)
 5. Haz clic en **Finish**
 
-#### **Paso 2: Iniciar el Emulador**
+#### **Paso 6: Iniciar el Emulador**
 
 1. En **Device Manager**, haz clic en ▶️ junto a tu emulador
 2. Espera a que el emulador inicie completamente
 
-#### **Paso 3: Ejecutar la Aplicación**
+#### **Paso 7: Ejecutar la Aplicación**
 
 1. Haz clic en el botón **Run** (▶️) en la barra superior de Android Studio
 2. Selecciona tu emulador de la lista
@@ -178,10 +105,7 @@ Gradle descargará automáticamente todas las dependencias necesarias:
 
 La aplicación se compilará, instalará y ejecutará automáticamente.
 
-**✅ Configuración por defecto:** La app está configurada para usar `http://10.0.2.2:3000/` que es la IP especial del emulador para acceder a `localhost` del host.
-
----
-
+#### **Paso 8: **Alternativa local** En la raiz del proyecto tambien se encuentra un archivo apk para su instalacion en dispositivos fisicos **
 
 
 ## 🛠️ Tecnologías Utilizadas
@@ -195,14 +119,136 @@ La aplicación se compilará, instalará y ejecutará automáticamente.
 - **Asincronía:** Coroutines + Flow
 - **Navegación:** Navigation Compose
 
+
+# 🧪 Pruebas - Vinilos App
+El documento de estrategia de pruebas y arquitectura de la aplicacion se encuentra en la pagina sprint 01 en la wiki del repositorio
+
+## 📁 Estructura de Pruebas
+
+```
+app/src/
+├── test/                           # Pruebas Unitarias (JUnit)
+│   └── java/com/example/vinylsapp/
+│       ├── data/
+│       │   ├── network/
+│       │   │   └── AlbumApiServiceTest.kt    # Pruebas del API Service
+│       │   └── repository/
+│       │       └── AlbumRepositoryTest.kt    # Pruebas del Repository
+│       └── ui/
+│           └── albums/
+│               └── AlbumViewModelTest.kt     # Pruebas del ViewModel
+│
+└── androidTest/                    # Pruebas de Instrumentación (Espresso + Compose)
+    └── java/com/example/vinylsapp/
+        ├── CustomTestRunner.kt               # Runner personalizado para Hilt
+        ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes
+        ├── ArtistListE2ETest.kt              # Pruebas E2E de Artistas
+        └── ui/
+            ├── albums/
+            │   └── AlbumListScreenTest.kt    # Pruebas UI de Álbumes
+            └── artists/
+                └── ArtistListScreenTest.kt   # Pruebas UI de Artistas
+```
+
 ---
 
-## � Documentación Adicional
+## 🎯 Ejecucion de pruebas
 
-Para información detallada sobre la arquitectura y los patrones de diseño, consulta:
+## 🚀 Cómo Ejecutar las Pruebas
 
-- **ARCHITECTURE.md** - Arquitectura de la aplicación
+### **Pruebas Unitarias** (Rápidas)
+
+Desde Android Studio:
+1. Haz clic derecho en la carpeta `test/`
+2. Selecciona **Run 'Tests in app.test'**
+
+
+**Resultado:** Se ejecutan en segundos sin necesidad de emulador.
 
 ---
 
+### **Pruebas de Instrumentación/E2E** (Lentas)
 
+**⚠️ Requisitos:**
+- Emulador de Android ejecutándose
+- Backend corriendo en `https://backvynils-8c16.onrender.com/` (para E2E tests)
+
+Desde Android Studio:
+1. Inicia el emulador
+2. Haz clic derecho en la carpeta `androidTest/`
+3. Selecciona **Run 'Tests in app.androidTest'**
+
+
+
+**Resultado:** Se instala la app en el emulador y ejecuta las pruebas.
+
+---
+
+### **Ejecutar una prueba específica**
+
+Desde Android Studio:
+1. Abre el archivo de prueba
+2. Haz clic en el ícono verde ▶️ junto al nombre de la clase o método
+3. Selecciona **Run**
+
+---
+
+## 📊 Ver Resultados
+
+### Desde Android Studio:
+- Los resultados aparecen en la pestaña **Run** en la parte inferior
+- ✅ Verde = Pasó
+- ❌ Rojo = Falló
+
+### Reportes HTML:
+```bash
+# Pruebas unitarias
+open app/build/reports/tests/testDebugUnitTest/index.html
+
+# Pruebas de instrumentación
+open app/build/reports/androidTests/connected/index.html
+```
+
+
+
+## 🛠️ Tecnologías y Frameworks
+
+### Pruebas Unitarias:
+- **JUnit 4**: Framework de pruebas estándar
+- **MockK**: Librería de mocking para Kotlin
+- **Coroutines Test**: Testing de coroutines
+- **Turbine**: Testing de Flows (opcional, añadido en dependencias)
+
+### Pruebas de UI/E2E:
+- **Espresso**: Framework de pruebas de UI de Android
+- **Compose UI Testing**: Testing específico para Jetpack Compose
+- **Hilt Testing**: Inyección de dependencias en pruebas
+- **MockWebServer**: Simular respuestas del backend (opcional)
+
+
+
+## 📚 Referencias
+
+- [Testing en Android](https://developer.android.com/training/testing)
+- [Compose Testing](https://developer.android.com/jetpack/compose/testing)
+- [MockK Documentation](https://mockk.io/)
+- [Hilt Testing Guide](https://developer.android.com/training/dependency-injection/hilt-testing)
+- [Espresso Basics](https://developer.android.com/training/testing/espresso)
+
+---
+
+## 🎯 Coverage (Cobertura)
+
+Para generar un reporte de cobertura:
+
+```bash
+./gradlew testDebugUnitTestCoverage
+```
+
+Abre el reporte en:
+```
+app/build/reports/coverage/test/debug/index.html
+```
+
+
+**Última actualización:** 02 Noviembre 2025

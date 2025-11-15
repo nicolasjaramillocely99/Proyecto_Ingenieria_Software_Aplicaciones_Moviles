@@ -20,11 +20,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     
-    // URL base del backend Docker
-    // El backend corre en Docker en el puerto 3000
-    // Para emulador Android: http://10.0.2.2:3000/ (10.0.2.2 = localhost del host)
-    // Para dispositivo físico: http://<IP_DE_TU_PC>:3000/ (reemplaza con tu IP local)
-    // Ejemplo IP local: http://192.168.1.100:3000/
+    // URL base del backend
+    // Backend hosted en Render: https://backvynils-8c16.onrender.com/
+    // Para backend local en Docker (emulador): http://10.0.2.2:3000/
+    // Para backend local en dispositivo físico: http://<IP_DE_TU_PC>:3000/
     private const val BASE_URL = "https://backvynils-8c16.onrender.com/"
     
     @Provides

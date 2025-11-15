@@ -11,4 +11,15 @@
     <string name="error_loading_artists">Error al cargar los artistas</string>
     <string name="retry">Reintentar</string>
     <string name="add_album">Agregar álbum</string>
+    <string name="create_album_title">Crear Álbum</string>
+    <string name="create_album_button">Crear Álbum</string>
+    <string name="creating">Creando...</string>
+    <string name="back">Volver</string>
+    <string name="album_name">Nombre del álbum</string>
+    <string name="album_cover_url">URL de la portada</string>
+    <string name="release_date">Fecha de lanzamiento</string>
+    <string name="date_format_hint">Formato: YYYY-MM-DD</string>
+    <string name="genre">Género</string>
+    <string name="record_label">Discográfica</string>
+    <string name="description">Descripción</string>
 </resources>
