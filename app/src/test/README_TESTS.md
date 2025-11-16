@@ -462,7 +462,7 @@ app/build/reports/coverage/test/debug/index.html
 ```
 
 
-**Última actualización:** Noviembre 2025
+**Última actualización:** 16 Noviembre 2025
 
 ---
 
@@ -476,7 +476,7 @@ app/build/reports/coverage/test/debug/index.html
 | **Álbumes - Crear** | ✅ | ✅ | ✅ | Completo |
 | **Álbumes - Detalle** | ✅ | ✅ | ✅ | Completo |
 | **Artistas - Listar** | ✅ | ✅ | ✅ | Completo |
-| **Artistas - Detalle** | ❌ | ✅ | ✅ | Parcial |
+| **Artistas - Detalle** | ✅ | ✅ | ✅ | Parcial |
 | **Coleccionistas - Listar** | ✅ | ❌ | ✅ | Parcial |
 
 ### Totales
