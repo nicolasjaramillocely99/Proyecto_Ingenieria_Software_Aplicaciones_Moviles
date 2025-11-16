@@ -1,6 +1,6 @@
 # 🧪 Pruebas - Vinilos App
 
-Esta carpeta contiene todas las pruebas para las funcionalidades de **Álbumes** (listar y crear) y **Artistas** de la aplicación Vinilos.
+Esta carpeta contiene todas las pruebas para las funcionalidades de **Álbumes** (listar, crear y detalle), **Artistas** (listar y detalle) y **Coleccionistas** (listar) de la aplicación Vinilos.
 
 ## 📁 Estructura de Pruebas
 
@@ -10,26 +10,36 @@ app/src/
 │   └── java/com/example/vinylsapp/
 │       ├── data/
 │       │   ├── network/
-│       │   │   └── AlbumApiServiceTest.kt    # Pruebas del API Service
+│       │   │   ├── AlbumApiServiceTest.kt    # Pruebas del API Service de Álbumes
+│       │   │   └── ArtistApiServiceTest.kt   # Pruebas del API Service de Artistas
 │       │   └── repository/
-│       │       └── AlbumRepositoryTest.kt    # Pruebas del Repository
+│       │       ├── AlbumRepositoryTest.kt     # Pruebas del Repository de Álbumes
+│       │       └── ArtistRepositoryTest.kt    # Pruebas del Repository de Artistas
 │       └── ui/
-│           └── albums/
-│               ├── AlbumViewModelTest.kt          # Pruebas del ViewModel (listar)
-│               └── CreateAlbumViewModelTest.kt    # Pruebas del ViewModel (crear)
+│           ├── albums/
+│           │   ├── AlbumViewModelTest.kt          # Pruebas del ViewModel (listar)
+│           │   ├── AlbumDetailViewModelTest.kt    # Pruebas del ViewModel (detalle)
+│           │   └── CreateAlbumViewModelTest.kt    # Pruebas del ViewModel (crear)
+│           └── collectors/
+│               └── CollectorViewModelTest.kt      # Pruebas del ViewModel de Coleccionistas
 │
 └── androidTest/                    # Pruebas de Instrumentación (Espresso + Compose)
     └── java/com/example/vinylsapp/
         ├── CustomTestRunner.kt               # Runner personalizado para Hilt
         ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes (listar)
+        ├── AlbumDetailE2ETest.kt            # Pruebas E2E de Álbumes (detalle)
         ├── CreateAlbumE2ETest.kt             # Pruebas E2E de Álbumes (crear)
-        ├── ArtistListE2ETest.kt              # Pruebas E2E de Artistas
+        ├── ArtistListE2ETest.kt              # Pruebas E2E de Artistas (listar)
+        ├── ArtistDetailE2ETest.kt             # Pruebas E2E de Artistas (detalle)
+        ├── CollectorListE2ETest.kt           # Pruebas E2E de Coleccionistas
         └── ui/
             ├── albums/
             │   ├── AlbumListScreenTest.kt       # Pruebas UI de Álbumes (listar)
+            │   ├── AlbumDetailScreenTest.kt     # Pruebas UI de Álbumes (detalle)
             │   └── CreateAlbumScreenTest.kt     # Pruebas UI de Álbumes (crear)
             └── artists/
-                └── ArtistListScreenTest.kt      # Pruebas UI de Artistas
+                ├── ArtistListScreenTest.kt      # Pruebas UI de Artistas (listar)
+                └── ArtistDetailScreenTest.kt    # Pruebas UI de Artistas (detalle)
 ```
 
 ---
@@ -115,6 +125,44 @@ Ejecutan rápidamente en la JVM local sin necesitar un emulador.
 - Kotlin Coroutines Test
 - InstantTaskExecutorRule (LiveData/StateFlow)
 
+#### `AlbumDetailViewModelTest.kt`
+**Objetivo:** Verificar la lógica de presentación y estados de UI para el detalle de álbum.
+
+**Pruebas incluidas:**
+- ✅ Carga automática al inicializar con albumId válido
+- ✅ No carga si el albumId es inválido (0 o negativo)
+- ✅ Estado inicial de Loading cuando se carga el álbum
+- ✅ Actualización a Success con datos correctos del álbum
+- ✅ Actualización a Error cuando hay un fallo
+- ✅ Selección de tracks (selectTrack)
+- ✅ Deselección de tracks al hacer click en el mismo track
+- ✅ Cambio de selección a otro track diferente
+- ✅ Reintento manual de carga (loadAlbumDetails)
+- ✅ No hace nada si albumId es inválido al cargar manualmente
+- ✅ Integridad de datos de tracks en el álbum
+
+**Tecnologías:**
+- JUnit 4
+- MockK (mocking)
+- Kotlin Coroutines Test
+- InstantTaskExecutorRule (LiveData/StateFlow)
+
+#### `CollectorViewModelTest.kt`
+**Objetivo:** Verificar la lógica de presentación y estados de UI para la lista de coleccionistas.
+
+**Pruebas incluidas:**
+- ✅ Carga automática al inicializar (init triggers loadCollectors)
+- ✅ Estado de Loading mientras el repositorio emite Loading
+- ✅ Actualización con coleccionistas cuando hay éxito
+- ✅ Actualización con error cuando el repositorio falla
+- ✅ Marcado como vacío cuando el repositorio retorna lista vacía
+
+**Tecnologías:**
+- JUnit 4
+- MockK (mocking)
+- Kotlin Coroutines Test
+- InstantTaskExecutorRule (LiveData/StateFlow)
+
 ---
 
 ### 2. **Pruebas de UI con Compose** (`androidTest/`)
@@ -175,6 +223,41 @@ Requieren un emulador o dispositivo Android.
 - Compose UI Testing
 - JUnit 4
 
+#### `AlbumDetailScreenTest.kt`
+**Objetivo:** Verificar componentes individuales de Compose para el detalle de álbum.
+
+**Pruebas incluidas:**
+- ✅ Visualización del título del álbum
+- ✅ Visualización del nombre del artista
+- ✅ Visualización del año y género
+- ✅ Visualización de la descripción del álbum
+- ✅ Visualización del encabezado de canciones con botón "+"
+- ✅ Funcionalidad del botón de agregar canción
+- ✅ Visualización de todas las canciones en la lista
+- ✅ Visualización de número de pista, título y duración de cada track
+- ✅ Callback de click en items de tracks
+- ✅ Renderizado correcto del estado de carga
+- ✅ Visualización de la portada del álbum
+- ✅ Visualización de recordLabel cuando no hay performers
+
+**Tecnologías:**
+- Compose UI Testing
+- JUnit 4
+
+#### `ArtistDetailScreenTest.kt`
+**Objetivo:** Verificar componentes individuales de Compose para el detalle de artista.
+
+**Pruebas incluidas:**
+- ✅ Visualización del título del artista
+- ✅ Visualización de la descripción del artista
+- ✅ Visualización de todos los álbumes del artista
+- ✅ Visualización del año de lanzamiento de los álbumes
+- ✅ Visualización de la imagen del artista
+
+**Tecnologías:**
+- Compose UI Testing
+- JUnit 4
+
 ---
 
 ### 3. **Pruebas End-to-End (E2E)** (`androidTest/`)
@@ -223,6 +306,56 @@ Verifican el flujo completo de la aplicación.
 - ✅ Dropdowns muestran opciones correctas
 - ✅ Botón de retroceso navega hacia atrás
 - ✅ Campo fecha muestra hint de formato
+
+**Tecnologías:**
+- Hilt Android Testing (inyección de dependencias)
+- Compose UI Testing
+- Espresso
+- JUnit 4
+
+#### `AlbumDetailE2ETest.kt`
+**Objetivo:** Probar el flujo completo de detalle de álbum con integración real.
+
+**Pruebas incluidas:**
+- ✅ Navegación a pantalla de detalle cuando se hace click en un álbum
+- ✅ Visualización del título "Detalles del Álbum"
+- ✅ Funcionalidad del botón de retroceso
+- ✅ Visualización de información del álbum
+- ✅ Visualización de la sección de canciones
+- ✅ Verificación de que la pantalla es scrolleable
+
+**Tecnologías:**
+- Hilt Android Testing (inyección de dependencias)
+- Compose UI Testing
+- Espresso
+- JUnit 4
+
+#### `ArtistDetailE2ETest.kt`
+**Objetivo:** Probar el flujo completo de detalle de artista con integración real.
+
+**Pruebas incluidas:**
+- ✅ Visualización del botón de Artistas al iniciar
+- ✅ Navegación a pantalla de detalle cuando se hace click en un artista
+- ✅ Visualización del título "Detalles del Artista"
+- ✅ Funcionalidad del botón de retroceso
+- ✅ Visualización de información del artista
+- ✅ Visualización de la sección de álbumes
+
+**Tecnologías:**
+- Hilt Android Testing (inyección de dependencias)
+- Compose UI Testing
+- Espresso
+- JUnit 4
+
+#### `CollectorListE2ETest.kt`
+**Objetivo:** Probar el flujo completo de listar coleccionistas con integración real.
+
+**Pruebas incluidas:**
+- ✅ Visualización de la sección de coleccionistas al navegar
+- ✅ Visualización del botón flotante (FAB) de agregar coleccionista
+- ✅ Manejo de errores de red cuando el backend no está disponible
+- ✅ Funcionalidad del botón de reintentar
+- ✅ Carga de imágenes en las tarjetas de coleccionistas
 
 **Tecnologías:**
 - Hilt Android Testing (inyección de dependencias)
@@ -329,4 +462,26 @@ app/build/reports/coverage/test/debug/index.html
 ```
 
 
-**Última actualización:** 02 Noviembre 2025
+**Última actualización:** Noviembre 2025
+
+---
+
+## 📋 Resumen de Cobertura de Pruebas
+
+### Funcionalidades Cubiertas
+
+| Funcionalidad | Unitarias | UI Tests | E2E Tests | Estado |
+|---------------|-----------|----------|-----------|--------|
+| **Álbumes - Listar** | ✅ | ✅ | ✅ | Completo |
+| **Álbumes - Crear** | ✅ | ✅ | ✅ | Completo |
+| **Álbumes - Detalle** | ✅ | ✅ | ✅ | Completo |
+| **Artistas - Listar** | ✅ | ✅ | ✅ | Completo |
+| **Artistas - Detalle** | ❌ | ✅ | ✅ | Parcial |
+| **Coleccionistas - Listar** | ✅ | ❌ | ✅ | Parcial |
+
+### Totales
+
+- **Pruebas Unitarias:** 8 archivos
+- **Pruebas UI:** 6 archivos
+- **Pruebas E2E:** 6 archivos
+- **Total de archivos de prueba:** 20 archivos
