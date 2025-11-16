@@ -33,6 +33,17 @@ internal object RepositoryLogger {
 }
 
 /**
+ * Constantes para patrones de regex utilizados en el procesamiento de errores
+ */
+private object ErrorRegexPatterns {
+    /** Patrón para extraer el campo "message" de un JSON */
+    const val MESSAGE_FIELD = "\"message\"\\s*:\\s*\"([^\"]+)\""
+    
+    /** Patrón para extraer un array de mensajes del campo "message" */
+    const val MESSAGE_ARRAY_FIELD = "\"message\"\\s*:\\s*\\[([^\\]]+)\\]"
+}
+
+/**
  * Repository Pattern: AlbumRepository
  * Actúa como única fuente de verdad para los datos de álbumes
  * Abstrae la lógica de obtención de datos del ViewModel
@@ -246,13 +257,13 @@ class AlbumRepository @Inject constructor(
                 errorBody.contains("\"message\"") && errorBody.contains("[") -> {
                     // Formato: {"message": ["error1", "error2"]} o {"message": "error"}
                     val arrayRegex = "\"message\"\\s*:\\s*\\[\\s*\"([^\"]+)\"".toRegex()
-                    val singleRegex = "\"message\"\\s*:\\s*\"([^\"]+)\"".toRegex()
+                    val singleRegex = ErrorRegexPatterns.MESSAGE_FIELD.toRegex()
                     arrayRegex.find(errorBody)?.groupValues?.get(1) 
                         ?: singleRegex.find(errorBody)?.groupValues?.get(1)
                 }
                 // Caso 2: Mensaje simple
                 errorBody.contains("\"message\"") -> {
-                    val messageRegex = "\"message\"\\s*:\\s*\"([^\"]+)\"".toRegex(RegexOption.MULTILINE)
+                    val messageRegex = ErrorRegexPatterns.MESSAGE_FIELD.toRegex(RegexOption.MULTILINE)
                     messageRegex.find(errorBody)?.groupValues?.get(1)
                 }
                 // Caso 3: Campo "error"
@@ -287,7 +298,7 @@ class AlbumRepository @Inject constructor(
                 // Caso 6: Si parece ser un objeto de validación NestJS, extraer el primer mensaje útil
                 errorBody.contains("statusCode") && errorBody.contains("error") -> {
                     // Formato NestJS estándar: {"statusCode": 400, "message": "...", "error": "..."}
-                    val nestMessageRegex = "\"message\"\\s*:\\s*\"([^\"]+)\"".toRegex()
+                    val nestMessageRegex = ErrorRegexPatterns.MESSAGE_FIELD.toRegex()
                     nestMessageRegex.find(errorBody)?.groupValues?.get(1)
                 }
                 // Caso 7: Si todo lo demás falla, retornar una parte del error body si es razonablemente corto
@@ -334,7 +345,7 @@ class AlbumRepository @Inject constructor(
                 }
                 
                 // Si contiene un campo "message", extraerlo de forma simple
-                val simpleMessageMatch = Regex("\"message\"\\s*:\\s*\"([^\"]+)\"").find(cleaned)
+                val simpleMessageMatch = Regex(ErrorRegexPatterns.MESSAGE_FIELD).find(cleaned)
                 simpleMessageMatch?.groupValues?.get(1)?.takeIf { it.isNotBlank() && it != "ValidationError" }
             } else {
                 null
@@ -352,7 +363,7 @@ class AlbumRepository @Inject constructor(
         return try {
             // Buscar arrays de mensajes de validación
             // Formato común: {"message": ["field1 debe ser...", "field2 debe ser..."]}
-            val arrayPattern = "\"message\"\\s*:\\s*\\[([^\\]]+)\\]".toRegex()
+            val arrayPattern = ErrorRegexPatterns.MESSAGE_ARRAY_FIELD.toRegex()
             val arrayMatch = arrayPattern.find(errorBody)
             
             if (arrayMatch != null) {
