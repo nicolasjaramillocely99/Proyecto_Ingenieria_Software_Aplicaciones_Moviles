@@ -14,24 +14,21 @@ plugins {
 }
 
 // Configuración de SonarQube
-sonar {
-    properties {
-        property("sonar.projectKey", "misw-kotlinvinilos")
-        property("sonar.organization", "misw-kotlinvinilos")
-        property("sonar.host.url", "https://sonarcloud.io")
-        
-        // Configurar solo el módulo app - NO usar sonar.modules para evitar duplicación
-        // Las rutas son relativas al directorio raíz del proyecto
-        property("sonar.sources", "app/src/main/java")
-        property("sonar.tests", "app/src/test/java,app/src/androidTest/java")
-        property("sonar.java.binaries", "app/build/intermediates/javac/debug/classes")
-        property("sonar.kotlin.binaries", "app/build/tmp/kotlin-classes/debug")
-        property("sonar.coverage.jacoco.xmlReportPaths", "app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
-        property("sonar.junit.reportPaths", "app/build/test-results/testDebugUnitTest")
-        property("sonar.android.lint.report", "app/build/reports/lint-results-debug.xml")
-        
-        // Excluir el directorio raíz para evitar que SonarQube cree un módulo automático
-        property("sonar.exclusions", "**/build/**,**/*.gradle.kts")
+// Aplicar configuración solo al módulo app, no al proyecto raíz
+subprojects {
+    sonar {
+        properties {
+            property("sonar.projectKey", "misw-kotlinvinilos")
+            property("sonar.organization", "misw-kotlinvinilos")
+            property("sonar.host.url", "https://sonarcloud.io")
+            property("sonar.sources", "src/main/java")
+            property("sonar.tests", "src/test/java,src/androidTest/java")
+            property("sonar.java.binaries", "build/intermediates/javac/debug/classes")
+            property("sonar.kotlin.binaries", "build/tmp/kotlin-classes/debug")
+            property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
+            property("sonar.junit.reportPaths", "build/test-results/testDebugUnitTest")
+            property("sonar.android.lint.report", "build/reports/lint-results-debug.xml")
+        }
     }
 }
 
