@@ -112,98 +112,125 @@ class AlbumRepository @Inject constructor(
     fun createAlbum(album: CreateAlbumRequest): Flow<Result<Album>> = flow {
         try {
             emit(Result.Loading)
-            
             val response = apiService.createAlbum(album)
             
             if (response.isSuccessful && response.body() != null) {
                 emit(Result.Success(response.body()!!))
             } else {
-                // Intentar obtener el mensaje de error del body de la respuesta
-                val errorBody = response.errorBody()?.string()
-                
-                RepositoryLogger.e("AlbumRepository", "=== CREATE ALBUM ERROR ===")
-                RepositoryLogger.e("AlbumRepository", "Status Code: ${response.code()}")
-                RepositoryLogger.e("AlbumRepository", "Status Message: ${response.message()}")
-                RepositoryLogger.e("AlbumRepository", "Error Body Raw: $errorBody")
-                
-                val errorMessage = if (errorBody != null && errorBody.isNotBlank()) {
-                    // Intentar extraer mensaje útil del error body
-                    val extracted = extractErrorMessage(errorBody)
-                    RepositoryLogger.e("AlbumRepository", "Extracted message: $extracted")
-                    
-                    if (extracted != null && extracted.isNotBlank() && extracted != "ValidationError" && !extracted.contains("ValidationError:")) {
-                        extracted
-                    } else {
-                        // Si la extracción falla, intentar mostrar parte del error body de forma legible
-                        val formatted = formatErrorForDisplay(errorBody)
-                        if (formatted != null && formatted.isNotBlank() && formatted != "ValidationError") {
-                            formatted
-                        } else {
-                            // Fallback: Si es un error de validación, dar un mensaje más útil
-                            if (errorBody.contains("ValidationError", ignoreCase = true) || response.code() == 400) {
-                                "Error de validación: Verifica que todos los campos sean correctos. El URL de la portada debe comenzar con http:// o https://"
-                            } else {
-                                "Error ${response.code()}: ${response.message()}"
-                            }
-                        }
-                    }
-                } else {
-                    "Error ${response.code()}: ${response.message()}"
-                }
-                
-                RepositoryLogger.e("AlbumRepository", "Final error message: $errorMessage")
-                
-                emit(Result.Error(
-                    exception = Exception("Error ${response.code()}"),
-                    message = errorMessage
-                ))
+                val errorResult = handleResponseError(response.code(), response.message(), response.errorBody()?.string())
+                emit(errorResult)
             }
         } catch (e: HttpException) {
-            // Manejar excepciones HTTP específicas
-            val errorBody = e.response()?.errorBody()?.string()
-            
-            RepositoryLogger.e("AlbumRepository", "=== HTTP EXCEPTION ===")
-            RepositoryLogger.e("AlbumRepository", "Status Code: ${e.code()}")
-            RepositoryLogger.e("AlbumRepository", "Status Message: ${e.message()}")
-            RepositoryLogger.e("AlbumRepository", "Error Body Raw: $errorBody")
-            
-            val errorMessage = if (errorBody != null && errorBody.isNotBlank()) {
-                val extracted = extractErrorMessage(errorBody)
-                RepositoryLogger.e("AlbumRepository", "Extracted message: $extracted")
-                
-                if (extracted != null && extracted.isNotBlank() && extracted != "ValidationError" && !extracted.contains("ValidationError:")) {
-                    extracted
-                } else {
-                    val formatted = formatErrorForDisplay(errorBody)
-                    if (formatted != null && formatted.isNotBlank() && formatted != "ValidationError") {
-                        formatted
-                    } else {
-                        // Fallback: Si es un error de validación, dar un mensaje más útil
-                        if (errorBody.contains("ValidationError", ignoreCase = true) || e.code() == 400) {
-                            "Error de validación: Verifica que todos los campos sean correctos. El URL de la portada debe comenzar con http:// o https://"
-                        } else {
-                            "Error ${e.code()}: ${e.message()}"
-                        }
-                    }
-                }
-            } else {
-                "Error ${e.code()}: ${e.message()}"
-            }
-            
-            RepositoryLogger.e("AlbumRepository", "Final error message: $errorMessage", e)
-            
-            emit(Result.Error(
-                exception = e,
-                message = errorMessage
-            ))
+            val errorResult = handleHttpException(e)
+            emit(errorResult)
         } catch (e: Exception) {
-            RepositoryLogger.e("AlbumRepository", "Exception creating album", e)
-            emit(Result.Error(
-                exception = e,
-                message = "Error de conexión: ${e.message ?: e.localizedMessage ?: "Error desconocido"}"
-            ))
+            val errorResult = handleGenericException(e)
+            emit(errorResult)
         }
     }.flowOn(Dispatchers.IO)
+    
+    /**
+     * Maneja errores de respuesta HTTP no exitosa
+     */
+    private fun handleResponseError(code: Int, message: String, errorBody: String?): Result.Error {
+        RepositoryLogger.e("AlbumRepository", "=== CREATE ALBUM ERROR ===")
+        RepositoryLogger.e("AlbumRepository", "Status Code: $code")
+        RepositoryLogger.e("AlbumRepository", "Status Message: $message")
+        RepositoryLogger.e("AlbumRepository", "Error Body Raw: $errorBody")
+        
+        val errorMessage = processErrorBody(errorBody, code, message)
+        RepositoryLogger.e("AlbumRepository", "Final error message: $errorMessage")
+        
+        return Result.Error(
+            exception = Exception("Error $code"),
+            message = errorMessage
+        )
+    }
+    
+    /**
+     * Maneja excepciones HTTP
+     */
+    private fun handleHttpException(e: HttpException): Result.Error {
+        val errorBody = e.response()?.errorBody()?.string()
+        
+        RepositoryLogger.e("AlbumRepository", "=== HTTP EXCEPTION ===")
+        RepositoryLogger.e("AlbumRepository", "Status Code: ${e.code()}")
+        RepositoryLogger.e("AlbumRepository", "Status Message: ${e.message()}")
+        RepositoryLogger.e("AlbumRepository", "Error Body Raw: $errorBody")
+        
+        val errorMessage = processErrorBody(errorBody, e.code(), e.message())
+        RepositoryLogger.e("AlbumRepository", "Final error message: $errorMessage", e)
+        
+        return Result.Error(
+            exception = e,
+            message = errorMessage
+        )
+    }
+    
+    /**
+     * Maneja excepciones genéricas
+     */
+    private fun handleGenericException(e: Exception): Result.Error {
+        RepositoryLogger.e("AlbumRepository", "Exception creating album", e)
+        return Result.Error(
+            exception = e,
+            message = "Error de conexión: ${e.message ?: e.localizedMessage ?: "Error desconocido"}"
+        )
+    }
+    
+    /**
+     * Procesa el error body y retorna un mensaje apropiado
+     */
+    private fun processErrorBody(errorBody: String?, code: Int, message: String): String {
+        if (errorBody.isNullOrBlank()) {
+            return "Error $code: $message"
+        }
+        
+        val extracted = extractErrorMessage(errorBody)
+        RepositoryLogger.e("AlbumRepository", "Extracted message: $extracted")
+        
+        return when {
+            isValidExtractedMessage(extracted) -> extracted!!
+            else -> getFallbackErrorMessage(errorBody, code, message)
+        }
+    }
+    
+    /**
+     * Verifica si el mensaje extraído es válido
+     */
+    private fun isValidExtractedMessage(message: String?): Boolean {
+        return message != null && 
+               message.isNotBlank() && 
+               message != "ValidationError" && 
+               !message.contains("ValidationError:")
+    }
+    
+    /**
+     * Obtiene un mensaje de error de respaldo
+     */
+    private fun getFallbackErrorMessage(errorBody: String, code: Int, message: String): String {
+        val formatted = formatErrorForDisplay(errorBody)
+        
+        return when {
+            isValidExtractedMessage(formatted) -> formatted!!
+            isValidationError(errorBody, code) -> getValidationErrorMessage()
+            else -> "Error $code: $message"
+        }
+    }
+    
+    /**
+     * Verifica si el error es de validación
+     */
+    private fun isValidationError(errorBody: String, code: Int): Boolean {
+        return errorBody.contains("ValidationError", ignoreCase = true) || code == 400
+    }
+    
+    /**
+     * Retorna un mensaje de error de validación genérico
+     */
+    private fun getValidationErrorMessage(): String {
+        return "Error de validación: Verifica que todos los campos sean correctos. El URL de la portada debe comenzar con http:// o https://"
+    }
     
     /**
      * Extrae un mensaje de error útil del cuerpo de respuesta JSON
