@@ -95,12 +95,4 @@ class AlbumDetailViewModel @Inject constructor(
             )
         }
     }
-    
-    /**
-     * Limpia el mensaje de error
-     */
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
-    }
 }
-
