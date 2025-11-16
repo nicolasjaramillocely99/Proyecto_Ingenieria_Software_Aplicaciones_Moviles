@@ -296,7 +296,7 @@ class AlbumRepository @Inject constructor(
                     val parts = cleaned.split("ValidationError", ignoreCase = true)
                     if (parts.size > 1) {
                         val afterValidation = parts[1]
-                            .replace(Regex("[{}[\\]\"'`]"), " ")
+                            .replace(Regex("[{}\\[\\]\"'`]"), " ")
                             .replace(Regex("\\s+"), " ")
                             .trim()
                         

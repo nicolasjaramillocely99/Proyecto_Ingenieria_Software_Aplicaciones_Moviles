@@ -16,8 +16,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.vinylsapp.ui.albums.AlbumListScreen
 import com.example.vinylsapp.ui.albums.AlbumViewModel
+import com.example.vinylsapp.ui.albums.AlbumDetailScreen
+import com.example.vinylsapp.ui.albums.AlbumDetailViewModel
 import com.example.vinylsapp.ui.albums.CreateAlbumScreen
 import com.example.vinylsapp.ui.artists.ArtistListScreen
 import com.example.vinylsapp.ui.collectors.CollectorListScreen
@@ -85,10 +89,28 @@ fun VinylsApp() {
             composable(Screen.MyCollection.route) {
                 PlaceholderScreen(title = Screen.MyCollection.title)
             }
-
-            // Pantalla de detalle de álbum (placeholder)
-            composable(Screen.AlbumDetail.route) {
-                PlaceholderScreen(title = Screen.AlbumDetail.title)
+            
+            // Pantalla de detalle de álbum
+            composable(
+                route = Screen.AlbumDetail.route,
+                arguments = listOf(
+                    navArgument("albumId") {
+                        type = NavType.IntType
+                    }
+                )
+            ) { backStackEntry ->
+                // Hilt automáticamente inyecta el SavedStateHandle con los argumentos
+                val viewModel: AlbumDetailViewModel = hiltViewModel(backStackEntry)
+                
+                AlbumDetailScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onAddTrackClick = {
+                        // TODO: Implementar navegación a pantalla de agregar canción
+                    }
+                )
             }
 
             // Pantalla de detalle de artistas (placeholder)

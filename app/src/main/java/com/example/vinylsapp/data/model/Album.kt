@@ -29,7 +29,10 @@ data class Album(
     val recordLabel: String,
     
     @SerializedName("performers")
-    val performers: List<Performer>? = null
+    val performers: List<Performer>? = null,
+    
+    @SerializedName("tracks")
+    val tracks: List<Track>? = null
 )
 
 /**

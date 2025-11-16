@@ -1,7 +1,6 @@
 *.iml
 .gradle
 /local.properties
-/.idea/
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -14,9 +13,57 @@
 .externalNativeBuild
 .cxx
 local.properties
-INSTRUCCIONES_INICIO.md
 
-# Ignorar carpetas build generadas pero NO archivos build.gradle.kts
-app/build/
+# Gradle files
+.gradle/
 build/
-!**/build.gradle.kts
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Android Studio
+*.iml
+.idea/
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
+# IntelliJ
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build folder generated in Android Studio 2.2 and later
+.externalNativeBuild
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Freeline
+freeline.py
+freeline/
+freeline_project_description.json
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/readme.md
+
+# SonarQube
+.sonar/
+.scannerwork/

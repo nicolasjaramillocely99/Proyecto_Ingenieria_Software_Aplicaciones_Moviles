@@ -6,11 +6,8 @@
     <string name="my_collection_title">Mi Colección</string>
     <string name="loading">Cargando...</string>
     <string name="empty_albums">No hay álbumes disponibles</string>
-    <string name="error_loading_albums">Error al cargar los álbumes</string>
     <string name="empty_artists">No hay artistas disponibles</string>
-    <string name="error_loading_artists">Error al cargar los artistas</string>
     <string name="empty_collectors">No hay coleccionistas disponibles</string>
-    <string name="error_loading_collectors">Error al cargar los coleccionistas</string>
     <string name="retry">Reintentar</string>
     <string name="add_album">Agregar álbum</string>
     <string name="add_collector">Agregar coleccionista</string>
@@ -32,4 +29,7 @@
     <string name="genre">Género</string>
     <string name="record_label">Discográfica</string>
     <string name="description">Descripción</string>
+    <string name="album_detail_title">Detalles del Álbum</string>
+    <string name="songs">Canciones</string>
+    <string name="add_track">Agregar canción</string>
 </resources>
