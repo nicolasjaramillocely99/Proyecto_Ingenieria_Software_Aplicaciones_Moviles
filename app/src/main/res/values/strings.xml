@@ -22,4 +22,8 @@
     <string name="genre">Género</string>
     <string name="record_label">Discográfica</string>
     <string name="description">Descripción</string>
+    <string name="album_detail_title">Detalles del Álbum</string>
+    <string name="songs">Canciones</string>
+    <string name="add_track">Agregar canción</string>
+    <string name="error_loading_album">Error al cargar los detalles del álbum</string>
 </resources>
