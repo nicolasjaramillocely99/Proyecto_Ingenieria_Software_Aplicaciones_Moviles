@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,6 +24,8 @@ import com.example.vinylsapp.ui.albums.AlbumDetailViewModel
 import com.example.vinylsapp.ui.albums.CreateAlbumScreen
 import com.example.vinylsapp.ui.artists.ArtistListScreen
 import com.example.vinylsapp.ui.collectors.CollectorListScreen
+import com.example.vinylsapp.ui.artists.ArtistDetailScreen
+
 
 /**
  * Composable principal que gestiona la navegación de la aplicación
@@ -101,7 +102,7 @@ fun VinylsApp() {
             ) { backStackEntry ->
                 // Hilt automáticamente inyecta el SavedStateHandle con los argumentos
                 val viewModel: AlbumDetailViewModel = hiltViewModel(backStackEntry)
-                
+
                 AlbumDetailScreen(
                     viewModel = viewModel,
                     onNavigateBack = {
@@ -113,9 +114,22 @@ fun VinylsApp() {
                 )
             }
 
-            // Pantalla de detalle de artistas (placeholder)
-            composable(Screen.ArtistDetail.route) {
-                PlaceholderScreen(title = Screen.ArtistDetail.title)
+            // Pantalla de detalle de artistas
+            composable(
+                route = Screen.ArtistDetail.route,
+                arguments = listOf(
+                    navArgument("artistId") {
+                        type = NavType.IntType
+                    }
+                )
+            ) { backStackEntry ->
+                val artistId = backStackEntry.arguments?.getInt("artistId") ?: 0
+                ArtistDetailScreen(
+                    artistId = artistId,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             // Pantalla de crear álbum
@@ -143,7 +157,7 @@ fun VinylsApp() {
 fun BottomNavigationBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-
+    
     NavigationBar {
         bottomNavScreens.forEach { screen ->
             NavigationBarItem(

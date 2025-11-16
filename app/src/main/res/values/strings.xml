@@ -33,4 +33,6 @@
     <string name="album_detail_title">Detalles del Álbum</string>
     <string name="songs">Canciones</string>
     <string name="add_track">Agregar canción</string>
+    <string name="artist_detail_title">Detalle del Artista</string>
+    <string name="birth_date">Fecha de nacimiento</string>
 </resources>
