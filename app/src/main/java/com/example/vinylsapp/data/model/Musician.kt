@@ -21,4 +21,7 @@ data class Musician(
     
     @SerializedName("birthDate")
     val birthDate: String,
+
+    @SerializedName("albums")
+    val albums: List<Album>? = null
 )
