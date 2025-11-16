@@ -19,6 +19,8 @@ sonar {
         property("sonar.projectKey", "misw-kotlinvinilos")
         property("sonar.organization", "misw-kotlinvinilos")
         property("sonar.host.url", "https://sonarcloud.io")
+        // Configurar solo el módulo app para evitar duplicación
+        property("sonar.modules", "app")
         property("sonar.sources", "app/src/main/java")
         property("sonar.tests", "app/src/test/java,app/src/androidTest/java")
         property("sonar.java.binaries", "app/build/intermediates/javac/debug/classes")
@@ -26,6 +28,10 @@ sonar {
         property("sonar.coverage.jacoco.xmlReportPaths", "app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
         property("sonar.junit.reportPaths", "app/build/test-results/testDebugUnitTest")
         property("sonar.android.lint.report", "app/build/reports/lint-results-debug.xml")
+        
+        // Configuración del módulo app
+        property("sonar.app.sources", "src/main/java")
+        property("sonar.app.tests", "src/test/java,src/androidTest/java")
     }
 }
 
