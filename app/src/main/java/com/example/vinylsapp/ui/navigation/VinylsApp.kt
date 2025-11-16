@@ -15,11 +15,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.vinylsapp.ui.albums.AlbumListScreen
 import com.example.vinylsapp.ui.albums.AlbumViewModel
 import com.example.vinylsapp.ui.albums.CreateAlbumScreen
 import com.example.vinylsapp.ui.artists.ArtistListScreen
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.vinylsapp.ui.collectors.CollectorListScreen
 
 /**
  * Composable principal que gestiona la navegación de la aplicación
@@ -28,7 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun VinylsApp() {
     val navController = rememberNavController()
-    
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController = navController)
@@ -42,15 +43,19 @@ fun VinylsApp() {
             // Pantalla de álbumes
             composable(Screen.Albums.route) { backStackEntry ->
                 val viewModel: AlbumViewModel = hiltViewModel()
-                
+
                 // Recargar álbumes si se creó uno nuevo
-                androidx.compose.runtime.LaunchedEffect(backStackEntry.savedStateHandle.get<Boolean>("album_created")) {
+                androidx.compose.runtime.LaunchedEffect(
+                    backStackEntry.savedStateHandle.get<Boolean>(
+                        "album_created"
+                    )
+                ) {
                     if (backStackEntry.savedStateHandle.get<Boolean>("album_created") == true) {
                         viewModel.loadAlbums()
                         backStackEntry.savedStateHandle.remove<Boolean>("album_created")
                     }
                 }
-                
+
                 AlbumListScreen(
                     viewModel = viewModel,
                     onAlbumClick = { albumId ->
@@ -61,7 +66,7 @@ fun VinylsApp() {
                     }
                 )
             }
-            
+
             // Pantalla de artistas (placeholder)
             composable(Screen.Artists.route) {
                 ArtistListScreen(
@@ -70,17 +75,17 @@ fun VinylsApp() {
                     }
                 )
             }
-            
-            // Pantalla de coleccionistas (placeholder)
+
+            // Pantalla de coleccionistas
             composable(Screen.Collectors.route) {
-                PlaceholderScreen(title = Screen.Collectors.title)
+                CollectorListScreen()
             }
-            
+
             // Pantalla de mi colección (placeholder)
             composable(Screen.MyCollection.route) {
                 PlaceholderScreen(title = Screen.MyCollection.title)
             }
-            
+
             // Pantalla de detalle de álbum (placeholder)
             composable(Screen.AlbumDetail.route) {
                 PlaceholderScreen(title = Screen.AlbumDetail.title)
@@ -90,7 +95,7 @@ fun VinylsApp() {
             composable(Screen.ArtistDetail.route) {
                 PlaceholderScreen(title = Screen.ArtistDetail.title)
             }
-            
+
             // Pantalla de crear álbum
             composable(Screen.CreateAlbum.route) {
                 CreateAlbumScreen(
@@ -116,7 +121,7 @@ fun VinylsApp() {
 fun BottomNavigationBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    
+
     NavigationBar {
         bottomNavScreens.forEach { screen ->
             NavigationBarItem(

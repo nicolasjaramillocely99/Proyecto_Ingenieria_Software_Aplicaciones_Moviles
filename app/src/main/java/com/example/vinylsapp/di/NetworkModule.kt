@@ -1,6 +1,7 @@
 package com.example.vinylsapp.di
 
 import com.example.vinylsapp.data.network.AlbumApiService
+import com.example.vinylsapp.data.network.CollectorApiService
 import com.example.vinylsapp.data.network.MusicianApiService
 import dagger.Module
 import dagger.Provides
@@ -19,13 +20,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    
+
     // URL base del backend
     // Backend hosted en Render: https://backvynils-8c16.onrender.com/
     // Para backend local en Docker (emulador): http://10.0.2.2:3000/
     // Para backend local en dispositivo físico: http://<IP_DE_TU_PC>:3000/
     private const val BASE_URL = "https://backvynils-8c16.onrender.com/"
-    
+
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
@@ -33,7 +34,7 @@ object NetworkModule {
             level = HttpLoggingInterceptor.Level.BODY
         }
     }
-    
+
     @Provides
     @Singleton
     fun provideOkHttpClient(
@@ -46,7 +47,7 @@ object NetworkModule {
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
-    
+
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
@@ -56,7 +57,7 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-    
+
     @Provides
     @Singleton
     fun provideAlbumApiService(retrofit: Retrofit): AlbumApiService {
@@ -67,5 +68,11 @@ object NetworkModule {
     @Singleton
     fun provideArtistApiService(retrofit: Retrofit): MusicianApiService {
         return retrofit.create(MusicianApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCollectorApiService(retrofit: Retrofit): CollectorApiService {
+        return retrofit.create(CollectorApiService::class.java)
     }
 }
