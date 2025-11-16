@@ -8,6 +8,7 @@
     <string name="empty_albums">No hay álbumes disponibles</string>
     <string name="empty_artists">No hay artistas disponibles</string>
     <string name="empty_collectors">No hay coleccionistas disponibles</string>
+    <string name="error_loading_collectors">Error al cargar los coleccionistas</string>
     <string name="retry">Reintentar</string>
     <string name="add_album">Agregar álbum</string>
     <string name="add_collector">Agregar coleccionista</string>
