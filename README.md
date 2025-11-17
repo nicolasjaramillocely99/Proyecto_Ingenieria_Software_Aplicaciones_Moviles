@@ -103,7 +103,7 @@ Gradle descargará automáticamente todas las dependencias necesarias:
 2. Selecciona tu emulador de la lista
 3. Haz clic en **OK**
 
-La aplicación se compilará, instalará y ejecutará automáticamente.
+La aplicación se compilará, instalará y ejecutará automáticamente. Asimismo como se esta empleando el free tier de Firebase para el Backend existe una ligera carga de 20 segundos aproximadamente para el cargue correcto de los elementos de la app. 
 
 #### **Paso 8: **Alternativa local** En la raiz del proyecto tambien se encuentra un archivo apk para su instalacion en dispositivos fisicos **
 
@@ -131,23 +131,36 @@ app/src/
 │   └── java/com/example/vinylsapp/
 │       ├── data/
 │       │   ├── network/
-│       │   │   └── AlbumApiServiceTest.kt    # Pruebas del API Service
+│       │   │   ├── AlbumApiServiceTest.kt    # Pruebas del API Service de Álbumes
+│       │   │   └── ArtistApiServiceTest.kt   # Pruebas del API Service de Artistas
 │       │   └── repository/
-│       │       └── AlbumRepositoryTest.kt    # Pruebas del Repository
+│       │       ├── AlbumRepositoryTest.kt     # Pruebas del Repository de Álbumes
+│       │       └── ArtistRepositoryTest.kt    # Pruebas del Repository de Artistas
 │       └── ui/
-│           └── albums/
-│               └── AlbumViewModelTest.kt     # Pruebas del ViewModel
+│           ├── albums/
+│           │   ├── AlbumViewModelTest.kt          # Pruebas del ViewModel (listar)
+│           │   ├── AlbumDetailViewModelTest.kt    # Pruebas del ViewModel (detalle)
+│           │   └── CreateAlbumViewModelTest.kt    # Pruebas del ViewModel (crear)
+│           └── collectors/
+│               └── CollectorViewModelTest.kt      # Pruebas del ViewModel de Coleccionistas
 │
 └── androidTest/                    # Pruebas de Instrumentación (Espresso + Compose)
     └── java/com/example/vinylsapp/
         ├── CustomTestRunner.kt               # Runner personalizado para Hilt
-        ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes
-        ├── ArtistListE2ETest.kt              # Pruebas E2E de Artistas
+        ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes (listar)
+        ├── AlbumDetailE2ETest.kt            # Pruebas E2E de Álbumes (detalle)
+        ├── CreateAlbumE2ETest.kt             # Pruebas E2E de Álbumes (crear)
+        ├── ArtistListE2ETest.kt              # Pruebas E2E de Artistas (listar)
+        ├── ArtistDetailE2ETest.kt             # Pruebas E2E de Artistas (detalle)
+        ├── CollectorListE2ETest.kt           # Pruebas E2E de Coleccionistas
         └── ui/
             ├── albums/
-            │   └── AlbumListScreenTest.kt    # Pruebas UI de Álbumes
+            │   ├── AlbumListScreenTest.kt       # Pruebas UI de Álbumes (listar)
+            │   ├── AlbumDetailScreenTest.kt     # Pruebas UI de Álbumes (detalle)
+            │   └── CreateAlbumScreenTest.kt     # Pruebas UI de Álbumes (crear)
             └── artists/
-                └── ArtistListScreenTest.kt   # Pruebas UI de Artistas
+                ├── ArtistListScreenTest.kt      # Pruebas UI de Artistas (listar)
+                └── ArtistDetailScreenTest.kt    # Pruebas UI de Artistas (detalle)
 ```
 
 ---
@@ -251,4 +264,4 @@ app/build/reports/coverage/test/debug/index.html
 ```
 
 
-**Última actualización:** 02 Noviembre 2025
+**Última actualización:** 16 Noviembre 2025
