@@ -3,7 +3,11 @@ package com.example.vinylsapp
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import com.example.vinylsapp.ui.albums.CreateAlbumScreen
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,14 +25,24 @@ import org.junit.runner.RunWith
  * - Backend corriendo en https://backvynils-8c16.onrender.com/
  * - Emulador o dispositivo Android conectado
  */
+@LargeTest
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class CreateAlbumE2ETest {
     
     @get:Rule(order = 0)
-    val suppressInputManagerRule = SuppressInputManagerRule()
+    val hiltRule = HiltAndroidRule(this)
     
     @get:Rule(order = 1)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    val suppressInputManagerRule = SuppressInputManagerRule()
+    
+    @get:Rule(order = 2)
+    val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
+    
+    @Before
+    fun setup() {
+        hiltRule.inject()
+    }
     
     /**
      * Test E2E: Verificar que la pantalla de crear álbum se puede abrir
@@ -63,7 +77,9 @@ class CreateAlbumE2ETest {
             .assertIsDisplayed()
         
         // El botón de crear debe estar visible
-        composeTestRule.onNodeWithText("Crear Álbum", substring = true)
+        composeTestRule.onAllNodesWithText("Crear Álbum", substring = true)
+            .filter(hasClickAction())
+            .onFirst()
             .assertIsDisplayed()
     }
     
@@ -96,13 +112,17 @@ class CreateAlbumE2ETest {
         // Seleccionar género del dropdown
         composeTestRule.onNodeWithText("Género", substring = true)
             .performClick()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Rock")
+            .assertExists()
             .performClick()
         
         // Seleccionar discográfica del dropdown
         composeTestRule.onNodeWithText("Discográfica", substring = true)
             .performClick()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Sony Music")
+            .assertExists()
             .performClick()
         
         // Then: Todos los campos deben contener los valores ingresados
@@ -132,7 +152,9 @@ class CreateAlbumE2ETest {
         }
         
         // Initially: El botón debe estar deshabilitado
-        composeTestRule.onNodeWithText("Crear Álbum", substring = true)
+        composeTestRule.onAllNodesWithText("Crear Álbum", substring = true)
+            .filter(hasClickAction())
+            .onFirst()
             .assertIsNotEnabled()
         
         // When: Llenamos todos los campos requeridos
@@ -150,12 +172,16 @@ class CreateAlbumE2ETest {
         
         composeTestRule.onNodeWithText("Género", substring = true)
             .performClick()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Rock")
+            .assertExists()
             .performClick()
         
         composeTestRule.onNodeWithText("Discográfica", substring = true)
             .performClick()
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Sony Music")
+            .assertExists()
             .performClick()
         
         // Then: El botón debe estar habilitado
@@ -183,6 +209,7 @@ class CreateAlbumE2ETest {
         // When: Expandimos el dropdown de género
         composeTestRule.onNodeWithText("Género", substring = true)
             .performClick()
+        composeTestRule.waitForIdle()
         
         // Then: Debe mostrar todas las opciones de género
         composeTestRule.onNodeWithText("Classical")
@@ -197,9 +224,11 @@ class CreateAlbumE2ETest {
         // When: Cerrar el dropdown y abrir el de discográfica
         composeTestRule.onNodeWithText("Rock")
             .performClick() // Selecciona y cierra
+        composeTestRule.waitForIdle()
         
         composeTestRule.onNodeWithText("Discográfica", substring = true)
             .performClick()
+        composeTestRule.waitForIdle()
         
         // Then: Debe mostrar todas las opciones de discográfica
         composeTestRule.onNodeWithText("Sony Music")
