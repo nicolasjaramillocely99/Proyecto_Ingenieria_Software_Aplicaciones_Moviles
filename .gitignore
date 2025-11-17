@@ -67,5 +67,12 @@ fastlane/readme.md
 # SonarQube
 .sonar/
 .scannerwork/
+
+# Test strategy document
 estrategia-pruebas_v1.1.pdf
+
+# IntelliJ IDEA specific files
 .idea/deploymentTargetSelector.xml
+
+# Release keystore (specific file)
+release.keystore
