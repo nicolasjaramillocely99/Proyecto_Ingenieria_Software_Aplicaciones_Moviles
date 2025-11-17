@@ -24,6 +24,17 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            // Configuración de signing para release
+            // Nota: Para producción, usa un keystore seguro y no lo subas al repositorio
+            storeFile = file("release.keystore")
+            storePassword = "vinylsapp123"
+            keyAlias = "vinylsapp"
+            keyPassword = "vinylsapp123"
+        }
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
@@ -31,6 +42,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     
