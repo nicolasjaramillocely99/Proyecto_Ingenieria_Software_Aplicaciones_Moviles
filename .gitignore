@@ -67,3 +67,6 @@ fastlane/readme.md
 # SonarQube
 .sonar/
 .scannerwork/
+release.keystore
+*.keystore
+*.jks

@@ -25,13 +25,17 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            // Configuración de signing para release
-            // Nota: Para producción, usa un keystore seguro y no lo subas al repositorio
-            storeFile = file("release.keystore")
-            storePassword = "vinylsapp123"
-            keyAlias = "vinylsapp"
-            keyPassword = "vinylsapp123"
+        // Solo configurar signing si el keystore existe (builds locales)
+        val keystoreFile = file("release.keystore")
+        if (keystoreFile.exists()) {
+            create("release") {
+                // Configuración de signing para release
+                // Nota: Para producción, usa un keystore seguro y no lo subas al repositorio
+                storeFile = keystoreFile
+                storePassword = "vinylsapp123"
+                keyAlias = "vinylsapp"
+                keyPassword = "vinylsapp123"
+            }
         }
     }
 
@@ -42,7 +46,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            // Solo aplicar signing si el keystore existe (builds locales)
+            val keystoreFile = file("release.keystore")
+            if (keystoreFile.exists() && signingConfigs.findByName("release") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     
