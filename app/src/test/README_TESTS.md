@@ -476,8 +476,8 @@ app/build/reports/coverage/test/debug/index.html
 | **Álbumes - Crear** | ✅ | ✅ | ✅ | Completo |
 | **Álbumes - Detalle** | ✅ | ✅ | ✅ | Completo |
 | **Artistas - Listar** | ✅ | ✅ | ✅ | Completo |
-| **Artistas - Detalle** | ✅ | ✅ | ✅ | Parcial |
-| **Coleccionistas - Listar** | ✅ | ❌ | ✅ | Parcial |
+| **Artistas - Detalle** | ✅ | ✅ | ✅ | Completo |
+| **Coleccionistas - Listar** | ✅ | ✅ | ✅ | Completo |
 
 ### Totales
 
