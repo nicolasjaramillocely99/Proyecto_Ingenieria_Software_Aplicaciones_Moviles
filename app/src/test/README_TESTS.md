@@ -26,6 +26,7 @@ app/src/
 └── androidTest/                    # Pruebas de Instrumentación (Espresso + Compose)
     └── java/com/example/vinylsapp/
         ├── CustomTestRunner.kt               # Runner personalizado para Hilt
+        ├── AutomaticRipperTest.kt            # Ripper para pruebas de exploración automática
         ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes (listar)
         ├── AlbumDetailE2ETest.kt            # Pruebas E2E de Álbumes (detalle)
         ├── CreateAlbumE2ETest.kt             # Pruebas E2E de Álbumes (crear)
@@ -363,6 +364,20 @@ Verifican el flujo completo de la aplicación.
 - Espresso
 - JUnit 4
 
+#### `AutomaticRipperTest.kt` (Ripper)
+**Objetivo:** Exploración automática y aleatoria de la aplicación para detectar crashes y reconocer elementos de UI.
+
+**Funcionalidad:**
+- 🕵️ **Reconocimiento:** Escanea y loguea elementos interactivos en cada pantalla.
+- 🎲 **Exploración:** Navega aleatoriamente haciendo clic en elementos detectados.
+- 🛡️ **Resiliencia:** Maneja diálogos, elementos desaparecidos (StaleObjectException) y reinicia la app si sale accidentalmente.
+- 💥 **Detección de Crashes:** Reporta fallos si la aplicación se cierra inesperadamente.
+
+**Tecnologías:**
+- UI Automator
+- Hilt Android Testing
+- JUnit 4
+
 ---
 
 ## 🚀 Cómo Ejecutar las Pruebas
@@ -391,7 +406,16 @@ Desde Android Studio:
 
 
 
-**Resultado:** Se instala la app en el emulador y ejecuta las pruebas.
+4. **Ejecutar Ripper (Monkey Test):**
+   - Navega al archivo: `app/src/androidTest/java/com/example/vinylsapp/AutomaticRipperTest.kt`
+   - Haz clic derecho sobre la clase `AutomaticRipperTest` y selecciona **Run 'AutomaticRipperTest'**.
+   - En el test, una vez se abra la aplicacion, existe una espera configurada de 15 segundos para que cargue la interfaz, debido al retraso existente en la carga del back end al haberse empleado el free tier de firebase. 
+   - **Para ver el reporte de reconocimiento:**
+     1. Abre la pestaña **Logcat** en la parte inferior de Android Studio.
+     2. En el buscador del Logcat escribe: `tag:Ripper`.
+     3. Verás logs detallados como: `Reconocido [0]: Botón X` o `Acción: Clic en 'Guardar'`.
+
+**Resultado esperado:** La aplicación se abrirá en el emulador y comenzará a navegar autónomamente. El test finalizará en **verde (PASS)** si logra completar 50 interacciones sin que la aplicación se cierre inesperadamente (crash).
 
 ---
 
@@ -430,10 +454,11 @@ open app/build/reports/androidTests/connected/index.html
 - **Coroutines Test**: Testing de coroutines
 - **Turbine**: Testing de Flows (opcional, añadido en dependencias)
 
-### Pruebas de UI/E2E:
+### Pruebas de UI/E2E y Reconocimiento:
 - **Espresso**: Framework de pruebas de UI de Android
 - **Compose UI Testing**: Testing específico para Jetpack Compose
 - **Hilt Testing**: Inyección de dependencias en pruebas
+- **UI Automator**: Framework para interacción a nivel de sistema (usado en Ripper)
 - **MockWebServer**: Simular respuestas del backend (opcional)
 
 
@@ -478,10 +503,12 @@ app/build/reports/coverage/test/debug/index.html
 | **Artistas - Listar** | ✅ | ✅ | ✅ | Completo |
 | **Artistas - Detalle** | ✅ | ✅ | ✅ | Completo |
 | **Coleccionistas - Listar** | ✅ | ✅ | ✅ | Completo |
+| **Exploración Automática (Ripper)** | - | - | ✅ | Completo |
 
 ### Totales
 
 - **Pruebas Unitarias:** 8 archivos
 - **Pruebas UI:** 6 archivos
 - **Pruebas E2E:** 6 archivos
-- **Total de archivos de prueba:** 20 archivos
+- **Pruebas de Reconocimiento:** 1 archivo (Ripper)
+- **Total de archivos de prueba:** 21 archivos

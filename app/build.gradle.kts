@@ -153,6 +153,9 @@ dependencies {
 
     // Testing - MockWebServer para tests de integración
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+
+    // UI Automator - Para el Ripper de pruebas de reconocimiento
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
 }
 
 kapt {
