@@ -38,6 +38,17 @@ class AlbumDetailViewModel @Inject constructor(
         if (albumId > 0) {
             loadAlbumDetails()
         }
+        
+        // Observar cambios en savedStateHandle para refrescar cuando se crea un track
+        viewModelScope.launch {
+            savedStateHandle.getStateFlow<Boolean?>("track_created", null)
+                .collect { trackCreated ->
+                    if (trackCreated == true) {
+                        loadAlbumDetails()
+                        savedStateHandle.remove<Boolean>("track_created")
+                    }
+                }
+        }
     }
     
     /**

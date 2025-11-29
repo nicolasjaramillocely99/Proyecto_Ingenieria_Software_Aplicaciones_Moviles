@@ -1,7 +1,9 @@
 package com.example.vinylsapp.data.repository
 
 import com.example.vinylsapp.data.model.Album
+import com.example.vinylsapp.data.model.CreateTrackRequest
 import com.example.vinylsapp.data.model.Performer
+import com.example.vinylsapp.data.model.Track
 import com.example.vinylsapp.data.network.AlbumApiService
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -228,5 +230,133 @@ class AlbumRepositoryTest {
         
         // Then: Debe emitir Error
         assertTrue("Should emit Error", emissions[1] is Result.Error)
+    }
+    
+    /**
+     * Test: Verificar que createTrack emite Loading y luego Success cuando es exitoso
+     */
+    @Test
+    fun `createTrack emits Loading then Success when API call is successful`() = runTest {
+        // Given: API retorna una respuesta exitosa
+        val albumId = 1
+        val trackRequest = CreateTrackRequest(
+            name = "Test Track",
+            duration = "03:45",
+            albumId = albumId,
+            seconds = 225,
+            number = 1,
+            composer = "Test Composer"
+        )
+        val createdTrack = Track(
+            id = 1,
+            name = "Test Track",
+            duration = "03:45",
+            albumId = albumId,
+            seconds = 225,
+            number = 1,
+            composer = "Test Composer"
+        )
+        val successResponse = Response.success(createdTrack)
+        coEvery { apiService.createTrack(albumId, trackRequest) } returns successResponse
+        
+        // When: Creamos el track
+        val flow = repository.createTrack(albumId, trackRequest)
+        
+        // Then: El primer valor debe ser Loading
+        val firstEmission = flow.first()
+        assertTrue("First emission should be Loading", firstEmission is Result.Loading)
+    }
+    
+    /**
+     * Test: Verificar que createTrack retorna el track creado correctamente
+     */
+    @Test
+    fun `createTrack returns created track after loading`() = runTest {
+        // Given: API retorna una respuesta exitosa
+        val albumId = 1
+        val trackRequest = CreateTrackRequest(
+            name = "Test Track",
+            duration = "03:45",
+            albumId = albumId
+        )
+        val createdTrack = Track(
+            id = 1,
+            name = "Test Track",
+            duration = "03:45",
+            albumId = albumId
+        )
+        val successResponse = Response.success(createdTrack)
+        coEvery { apiService.createTrack(albumId, trackRequest) } returns successResponse
+        
+        // When: Recolectamos todos los valores del flow
+        val emissions = mutableListOf<Result<Track>>()
+        repository.createTrack(albumId, trackRequest).collect { emissions.add(it) }
+        
+        // Then: Debe haber 2 emisiones (Loading y Success)
+        assertEquals("Should emit Loading and Success", 2, emissions.size)
+        assertTrue("First should be Loading", emissions[0] is Result.Loading)
+        assertTrue("Second should be Success", emissions[1] is Result.Success)
+        
+        // Verificar que los datos son correctos
+        val successResult = emissions[1] as Result.Success
+        assertEquals("Should return track with id 1", 1, successResult.data.id)
+        assertEquals("Track name should match", "Test Track", successResult.data.name)
+        assertEquals("Track albumId should match", albumId, successResult.data.albumId)
+    }
+    
+    /**
+     * Test: Verificar que createTrack maneja errores HTTP correctamente
+     */
+    @Test
+    fun `createTrack emits Error when API returns error code`() = runTest {
+        // Given: API retorna un código de error 400
+        val albumId = 1
+        val trackRequest = CreateTrackRequest(
+            name = "Test Track",
+            albumId = albumId
+        )
+        val errorResponse = Response.error<Track>(
+            400,
+            "Bad Request".toResponseBody(null)
+        )
+        coEvery { apiService.createTrack(albumId, trackRequest) } returns errorResponse
+        
+        // When: Recolectamos los valores
+        val emissions = mutableListOf<Result<Track>>()
+        repository.createTrack(albumId, trackRequest).collect { emissions.add(it) }
+        
+        // Then: Debe emitir Loading y Error
+        assertEquals(2, emissions.size)
+        assertTrue("First should be Loading", emissions[0] is Result.Loading)
+        assertTrue("Second should be Error", emissions[1] is Result.Error)
+    }
+    
+    /**
+     * Test: Verificar que createTrack maneja excepciones de red correctamente
+     */
+    @Test
+    fun `createTrack emits Error when network exception occurs`() = runTest {
+        // Given: API lanza una excepción de red
+        val albumId = 1
+        val trackRequest = CreateTrackRequest(
+            name = "Test Track",
+            albumId = albumId
+        )
+        val networkException = java.io.IOException("Network unavailable")
+        coEvery { apiService.createTrack(albumId, trackRequest) } throws networkException
+        
+        // When: Recolectamos los valores
+        val emissions = mutableListOf<Result<Track>>()
+        repository.createTrack(albumId, trackRequest).collect { emissions.add(it) }
+        
+        // Then: Debe emitir Loading y Error
+        assertEquals(2, emissions.size)
+        assertTrue("First should be Loading", emissions[0] is Result.Loading)
+        assertTrue("Second should be Error", emissions[1] is Result.Error)
+        
+        val errorResult = emissions[1] as Result.Error
+        assertNotNull("Error should have an exception", errorResult.exception)
+        assertTrue("Error message should mention connection", 
+            errorResult.message?.contains("conexión", ignoreCase = true) == true)
     }
 }

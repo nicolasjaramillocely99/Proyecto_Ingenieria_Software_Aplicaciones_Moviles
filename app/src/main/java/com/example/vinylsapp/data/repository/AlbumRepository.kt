@@ -2,6 +2,8 @@ package com.example.vinylsapp.data.repository
 
 import com.example.vinylsapp.data.model.Album
 import com.example.vinylsapp.data.model.CreateAlbumRequest
+import com.example.vinylsapp.data.model.CreateTrackRequest
+import com.example.vinylsapp.data.model.Track
 import com.example.vinylsapp.data.network.AlbumApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -390,4 +392,31 @@ class AlbumRepository @Inject constructor(
             null
         }
     }
+    
+    /**
+     * Crea un nuevo track asociado a un álbum
+     * 
+     * @param albumId ID del álbum al que se asociará el track
+     * @param track Datos del track a crear
+     * @return Flow con Result que contiene el track creado o un error
+     */
+    fun createTrack(albumId: Int, track: CreateTrackRequest): Flow<Result<Track>> = flow {
+        try {
+            emit(Result.Loading)
+            val response = apiService.createTrack(albumId, track)
+            
+            if (response.isSuccessful && response.body() != null) {
+                emit(Result.Success(response.body()!!))
+            } else {
+                val errorResult = handleResponseError(response.code(), response.message(), response.errorBody()?.string())
+                emit(errorResult)
+            }
+        } catch (e: HttpException) {
+            val errorResult = handleHttpException(e)
+            emit(errorResult)
+        } catch (e: Exception) {
+            val errorResult = handleGenericException(e)
+            emit(errorResult)
+        }
+    }.flowOn(Dispatchers.IO)
 }

@@ -60,6 +60,14 @@ sealed class Screen(
         title = "Crear Álbum",
         icon = Icons.Default.Album
     )
+    
+    object AddTrack : Screen(
+        route = "album/{albumId}/add_track",
+        title = "Agregar Track",
+        icon = Icons.Default.Album
+    ) {
+        fun createRoute(albumId: Int) = "album/$albumId/add_track"
+    }
 }
 
 /**

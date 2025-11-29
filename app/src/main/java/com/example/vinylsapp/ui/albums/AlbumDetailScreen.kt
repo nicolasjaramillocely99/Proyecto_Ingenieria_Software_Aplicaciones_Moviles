@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
@@ -102,6 +104,21 @@ fun AlbumDetailScreen(
                         },
                         onAddTrackClick = onAddTrackClick
                     )
+                    
+                    // Mostrar modal de detalle del track si hay uno seleccionado
+                    uiState.selectedTrackId?.let { trackId ->
+                        val selectedTrack = uiState.album!!.tracks?.find { it.id == trackId }
+                        selectedTrack?.let { track ->
+                            val trackIndex = uiState.album!!.tracks?.indexOf(track) ?: -1
+                            TrackDetailModal(
+                                track = track,
+                                trackNumber = track.number ?: (trackIndex + 1),
+                                onDismiss = {
+                                    viewModel.selectTrack(trackId) // Deseleccionar
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -144,7 +161,7 @@ fun AlbumDetailContent(
         ) { index, track ->
             TrackItem(
                 track = track,
-                trackNumber = index + 1,
+                trackNumber = track.number ?: (index + 1),
                 isSelected = track.id == selectedTrackId,
                 onClick = { onTrackClick(track.id) }
             )
@@ -359,7 +376,7 @@ fun TrackItem(
         
         // Duración
         Text(
-            text = track.duration,
+            text = track.duration ?: "--:--",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White.copy(alpha = 0.8f)
         )
@@ -424,6 +441,122 @@ private fun AlbumDetailErrorMessage(
                 Text(text = stringResource(R.string.retry))
             }
         }
+    }
+}
+
+/**
+ * Modal que muestra los detalles completos de un track
+ */
+@Composable
+fun TrackDetailModal(
+    track: Track,
+    trackNumber: Int,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF1E1B2E)
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Header con título y botón cerrar
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.track_detail_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    IconButton(onClick = onDismiss) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.back),
+                            tint = Color.White
+                        )
+                    }
+                }
+                
+                Divider(color = Color.White.copy(alpha = 0.2f))
+                
+                // Información del track
+                TrackDetailRow(
+                    label = stringResource(R.string.track_number_label),
+                    value = trackNumber.toString()
+                )
+                
+                TrackDetailRow(
+                    label = stringResource(R.string.track_name),
+                    value = track.name
+                )
+                
+                if (!track.duration.isNullOrBlank()) {
+                    TrackDetailRow(
+                        label = stringResource(R.string.track_duration),
+                        value = track.duration
+                    )
+                }
+                
+                if (!track.composer.isNullOrBlank()) {
+                    TrackDetailRow(
+                        label = stringResource(R.string.track_composer),
+                        value = track.composer
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                // Botón cerrar
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = VinylPurple
+                    )
+                ) {
+                    Text(text = stringResource(R.string.back))
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Fila de información en el modal de detalle del track
+ */
+@Composable
+private fun TrackDetailRow(
+    label: String,
+    value: String
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White.copy(alpha = 0.7f)
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
