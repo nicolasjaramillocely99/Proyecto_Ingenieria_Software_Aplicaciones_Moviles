@@ -89,9 +89,10 @@ class AddTrackViewModelTest {
      * Test: Verificar que el estado inicial está vacío
      */
     @Test
-    fun `initial state is empty`() = runTest {
+    fun `initial state is empty`() = runTest(testDispatcher.scheduler) {
         // When: Creamos el ViewModel
         viewModel = AddTrackViewModel(repository, savedStateHandle)
+        testDispatcher.scheduler.advanceUntilIdle()
         
         // Then: Todos los campos deben estar vacíos
         val state = viewModel.uiState.value
@@ -109,7 +110,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que updateName actualiza el nombre correctamente
      */
     @Test
-    fun `updateName updates name field`() = runTest {
+    fun `updateName updates name field`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel inicializado
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         
@@ -126,7 +127,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que updateDuration actualiza la duración
      */
     @Test
-    fun `updateDuration updates duration field`() = runTest {
+    fun `updateDuration updates duration field`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel inicializado
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         
@@ -142,7 +143,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que updateNumber actualiza el número de pista
      */
     @Test
-    fun `updateNumber updates number field`() = runTest {
+    fun `updateNumber updates number field`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel inicializado
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         
@@ -158,7 +159,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que updateComposer actualiza el compositor
      */
     @Test
-    fun `updateComposer updates composer field`() = runTest {
+    fun `updateComposer updates composer field`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel inicializado
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         
@@ -174,7 +175,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que isValid retorna false cuando el nombre está vacío
      */
     @Test
-    fun `isValid returns false when name is empty`() = runTest {
+    fun `isValid returns false when name is empty`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con nombre vacío pero otros campos llenos
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateDuration("03:45")
@@ -189,7 +190,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que isValid retorna true cuando solo el nombre está lleno
      */
     @Test
-    fun `isValid returns true when only name is filled`() = runTest {
+    fun `isValid returns true when only name is filled`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con solo el nombre lleno
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateName("Test Track")
@@ -203,7 +204,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que getDurationInSeconds convierte MM:SS correctamente
      */
     @Test
-    fun `getDurationInSeconds converts MM SS format correctly`() = runTest {
+    fun `getDurationInSeconds converts MM SS format correctly`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con duración en formato MM:SS
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateDuration("03:45")
@@ -218,7 +219,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que getDurationInSeconds convierte HH:MM:SS correctamente
      */
     @Test
-    fun `getDurationInSeconds converts HH MM SS format correctly`() = runTest {
+    fun `getDurationInSeconds converts HH MM SS format correctly`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con duración en formato HH:MM:SS
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateDuration("01:03:45")
@@ -233,7 +234,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que getDurationInSeconds retorna null para formato inválido
      */
     @Test
-    fun `getDurationInSeconds returns null for invalid format`() = runTest {
+    fun `getDurationInSeconds returns null for invalid format`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con duración en formato inválido
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateDuration("invalid")
@@ -248,7 +249,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que getTrackNumber retorna el número como Int
      */
     @Test
-    fun `getTrackNumber returns number as Int`() = runTest {
+    fun `getTrackNumber returns number as Int`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con número de pista
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateNumber("5")
@@ -263,7 +264,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que getTrackNumber retorna null cuando está vacío
      */
     @Test
-    fun `getTrackNumber returns null when empty`() = runTest {
+    fun `getTrackNumber returns null when empty`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel sin número de pista
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         testDispatcher.scheduler.advanceUntilIdle()
@@ -277,7 +278,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que createTrack muestra error cuando el formulario no es válido
      */
     @Test
-    fun `createTrack shows error when form is invalid`() = runTest {
+    fun `createTrack shows error when form is invalid`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con formulario incompleto (sin nombre)
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateDuration("03:45")
@@ -303,7 +304,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que createTrack muestra error cuando albumId es inválido
      */
     @Test
-    fun `createTrack shows error when albumId is invalid`() = runTest {
+    fun `createTrack shows error when albumId is invalid`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con albumId inválido
         val invalidSavedStateHandle = SavedStateHandle(mapOf("albumId" to 0))
         viewModel = AddTrackViewModel(repository, invalidSavedStateHandle)
@@ -327,7 +328,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que createTrack emite Loading y luego Success cuando es exitoso
      */
     @Test
-    fun `createTrack emits Loading then Success when creation is successful`() = runTest {
+    fun `createTrack emits Loading then Success when creation is successful`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con formulario válido y repository que retorna Success
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateName(validTrackRequest.name)
@@ -367,7 +368,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que createTrack maneja errores correctamente
      */
     @Test
-    fun `createTrack handles errors correctly`() = runTest {
+    fun `createTrack handles errors correctly`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con formulario válido y repository que retorna Error
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateName("Test Track")
@@ -401,7 +402,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que createTrack maneja campos opcionales correctamente
      */
     @Test
-    fun `createTrack handles optional fields correctly`() = runTest {
+    fun `createTrack handles optional fields correctly`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con solo el nombre (campos opcionales vacíos)
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateName("Test Track")
@@ -432,7 +433,7 @@ class AddTrackViewModelTest {
      * Test: Verificar que clearSuccess limpia el estado de éxito
      */
     @Test
-    fun `clearSuccess removes success state`() = runTest {
+    fun `clearSuccess removes success state`() = runTest(testDispatcher.scheduler) {
         // Given: ViewModel con estado de éxito
         viewModel = AddTrackViewModel(repository, savedStateHandle)
         viewModel.updateName("Test Track")
