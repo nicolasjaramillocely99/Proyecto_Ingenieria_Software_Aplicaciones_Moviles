@@ -22,6 +22,8 @@ import com.example.vinylsapp.ui.albums.AlbumViewModel
 import com.example.vinylsapp.ui.albums.AlbumDetailScreen
 import com.example.vinylsapp.ui.albums.AlbumDetailViewModel
 import com.example.vinylsapp.ui.albums.CreateAlbumScreen
+import com.example.vinylsapp.ui.albums.AddTrackScreen
+import com.example.vinylsapp.ui.albums.AddTrackViewModel
 import com.example.vinylsapp.ui.artists.ArtistListScreen
 import com.example.vinylsapp.ui.collectors.CollectorListScreen
 import com.example.vinylsapp.ui.artists.ArtistDetailScreen
@@ -109,7 +111,8 @@ fun VinylsApp() {
                         navController.popBackStack()
                     },
                     onAddTrackClick = {
-                        // TODO: Implementar navegación a pantalla de agregar canción
+                        val albumId = backStackEntry.arguments?.getInt("albumId") ?: 0
+                        navController.navigate(Screen.AddTrack.createRoute(albumId))
                     }
                 )
             }
@@ -142,6 +145,32 @@ fun VinylsApp() {
                         // Obtener el backStackEntry de Albums y marcar que se creó un álbum
                         navController.getBackStackEntry(Screen.Albums.route)
                             .savedStateHandle["album_created"] = true
+                        navController.popBackStack()
+                    }
+                )
+            }
+            
+            // Pantalla de agregar track
+            composable(
+                route = Screen.AddTrack.route,
+                arguments = listOf(
+                    navArgument("albumId") {
+                        type = NavType.IntType
+                    }
+                )
+            ) { backStackEntry ->
+                val viewModel: AddTrackViewModel = hiltViewModel(backStackEntry)
+                val albumId = backStackEntry.arguments?.getInt("albumId") ?: 0
+                
+                AddTrackScreen(
+                    viewModel = viewModel,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onTrackCreated = {
+                        // Marcar que se creó un track para refrescar el detalle del álbum
+                        // Usar previousBackStackEntry que debería ser AlbumDetail
+                        navController.previousBackStackEntry?.savedStateHandle?.set("track_created", true)
                         navController.popBackStack()
                     }
                 )

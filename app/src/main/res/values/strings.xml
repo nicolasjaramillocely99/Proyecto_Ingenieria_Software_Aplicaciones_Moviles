@@ -33,6 +33,19 @@
     <string name="album_detail_title">Detalles del Álbum</string>
     <string name="songs">Canciones</string>
     <string name="add_track">Agregar canción</string>
+    <string name="add_track_title">Agregar Track</string>
+    <string name="track_name">Nombre del track</string>
+    <string name="track_name_required">El nombre del track es obligatorio</string>
+    <string name="track_duration">Duración</string>
+    <string name="track_duration_hint">Formato: MM:SS o HH:MM:SS</string>
+    <string name="track_number">Número de pista</string>
+    <string name="track_composer">Compositor o artista colaborador</string>
+    <string name="save_track">Guardar</string>
+    <string name="saving">Guardando...</string>
+    <string name="cancel">Cancelar</string>
+    <string name="track_saved_success">Track agregado exitosamente</string>
+    <string name="track_detail_title">Detalle del Track</string>
+    <string name="track_number_label">Número de pista</string>
     <string name="artist_detail_title">Detalle del Artista</string>
     <string name="birth_date">Fecha de nacimiento</string>
 </resources>

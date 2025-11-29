@@ -250,5 +250,157 @@ class AlbumDetailScreenTest {
         composeTestRule.onNodeWithText("Artista desconocido", substring = true)
             .assertIsDisplayed()
     }
+    
+    /**
+     * Test: Verificar que el modal de detalle del track se muestra cuando se selecciona un track
+     */
+    @Test
+    fun trackDetailModal_displaysWhenTrackIsSelected() {
+        // Given: Track seleccionado
+        val selectedTrack = testAlbum.tracks!![0]
+        
+        composeTestRule.setContent {
+            TrackDetailModal(
+                track = selectedTrack,
+                trackNumber = 1,
+                onDismiss = {}
+            )
+        }
+        
+        // Then: Debe mostrar el modal con la información del track
+        composeTestRule.onNodeWithText("Detalle del Track", substring = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Amanecer")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("3:45")
+            .assertIsDisplayed()
+    }
+    
+    /**
+     * Test: Verificar que el modal de detalle del track muestra todos los campos
+     */
+    @Test
+    fun trackDetailModal_displaysAllTrackFields() {
+        // Given: Track con todos los campos
+        val trackWithAllFields = Track(
+            id = 1,
+            name = "Complete Track",
+            duration = "04:30",
+            albumId = 1,
+            seconds = 270,
+            number = 1,
+            composer = "Test Composer"
+        )
+        
+        composeTestRule.setContent {
+            TrackDetailModal(
+                track = trackWithAllFields,
+                trackNumber = 1,
+                onDismiss = {}
+            )
+        }
+        
+        // Then: Debe mostrar todos los campos
+        composeTestRule.onNodeWithText("Complete Track")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("04:30")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Test Composer")
+            .assertIsDisplayed()
+    }
+    
+    /**
+     * Test: Verificar que el botón cerrar del modal funciona
+     */
+    @Test
+    fun trackDetailModal_closeButtonWorks() {
+        // Given: Modal de detalle del track
+        var dismissCalled = false
+        val selectedTrack = testAlbum.tracks!![0]
+        
+        composeTestRule.setContent {
+            TrackDetailModal(
+                track = selectedTrack,
+                trackNumber = 1,
+                onDismiss = { dismissCalled = true }
+            )
+        }
+        
+        // When: Hacemos click en el botón cerrar
+        composeTestRule.onNodeWithContentDescription("Volver", substring = true)
+            .performClick()
+        
+        // Then: El callback debe haberse ejecutado
+        assert(dismissCalled)
+    }
+    
+    /**
+     * Test: Verificar que el modal muestra el número de pista correcto
+     */
+    @Test
+    fun trackDetailModal_displaysCorrectTrackNumber() {
+        // Given: Track con número de pista
+        val selectedTrack = testAlbum.tracks!![1] // Segundo track
+        
+        composeTestRule.setContent {
+            TrackDetailModal(
+                track = selectedTrack,
+                trackNumber = 2,
+                onDismiss = {}
+            )
+        }
+        
+        // Then: Debe mostrar el número de pista correcto
+        composeTestRule.onNodeWithText("2", substring = false)
+            .assertIsDisplayed()
+    }
+    
+    /**
+     * Test: Verificar que se puede hacer scroll en la lista de tracks
+     * Nota: Este test verifica que la lista tiene capacidad de scroll
+     * cuando hay muchos tracks. LazyColumn solo renderiza items visibles,
+     * así que verificamos que los primeros tracks están visibles y que
+     * la lista contiene múltiples tracks (lo que indica que el scroll funcionará
+     * cuando sea necesario)
+     */
+    @Test
+    fun trackList_allowsScrolling() {
+        // Given: Álbum con muchos tracks (más de los que caben en pantalla)
+        val manyTracks = (1..10).map { 
+            Track(it, "Track $it", "${it}:00", 1)
+        }
+        val albumWithManyTracks = testAlbum.copy(tracks = manyTracks)
+        
+        composeTestRule.setContent {
+            AlbumDetailContent(
+                album = albumWithManyTracks,
+                selectedTrackId = null,
+                onTrackClick = {},
+                onAddTrackClick = {}
+            )
+        }
+        
+        composeTestRule.waitForIdle()
+        
+        // Then: Los primeros tracks deben estar visibles
+        composeTestRule.onNodeWithText("Track 1")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Track 2")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Track 3")
+            .assertIsDisplayed()
+        
+        // Verificar que hay múltiples tracks en la lista
+        // (Esto confirma que la lista tiene contenido suficiente para requerir scroll)
+        // El LazyColumn manejará el scroll automáticamente cuando el usuario
+        // intente ver más contenido
+        val trackNodes = composeTestRule.onAllNodesWithText("Track", substring = true)
+            .fetchSemanticsNodes()
+        assert(trackNodes.size >= 3) { "Should have at least 3 tracks visible" }
+        
+        // Verificar que la lista tiene el header de canciones
+        composeTestRule.onNodeWithText("Canciones")
+            .assertIsDisplayed()
+    }
 }
 

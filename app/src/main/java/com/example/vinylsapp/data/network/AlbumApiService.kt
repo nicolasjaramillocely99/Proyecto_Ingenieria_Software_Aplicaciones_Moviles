@@ -2,6 +2,8 @@ package com.example.vinylsapp.data.network
 
 import com.example.vinylsapp.data.model.Album
 import com.example.vinylsapp.data.model.CreateAlbumRequest
+import com.example.vinylsapp.data.model.CreateTrackRequest
+import com.example.vinylsapp.data.model.Track
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -34,4 +36,14 @@ interface AlbumApiService {
      */
     @POST("albums")
     suspend fun createAlbum(@Body album: CreateAlbumRequest): Response<Album>
+    
+    /**
+     * Crea un nuevo track asociado a un álbum
+     * Endpoint: POST /albums/{albumId}/tracks
+     */
+    @POST("albums/{albumId}/tracks")
+    suspend fun createTrack(
+        @Path("albumId") albumId: Int,
+        @Body track: CreateTrackRequest
+    ): Response<Track>
 }
