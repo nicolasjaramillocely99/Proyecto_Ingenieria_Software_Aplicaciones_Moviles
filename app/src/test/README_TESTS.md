@@ -30,6 +30,7 @@ app/src/
         ├── AlbumListE2ETest.kt               # Pruebas E2E de Álbumes (listar)
         ├── AlbumDetailE2ETest.kt            # Pruebas E2E de Álbumes (detalle)
         ├── CreateAlbumE2ETest.kt             # Pruebas E2E de Álbumes (crear)
+        ├── AddTrackE2ETest.kt                # Pruebas E2E de Agregar Track
         ├── ArtistListE2ETest.kt              # Pruebas E2E de Artistas (listar)
         ├── ArtistDetailE2ETest.kt             # Pruebas E2E de Artistas (detalle)
         ├── CollectorListE2ETest.kt           # Pruebas E2E de Coleccionistas
@@ -119,6 +120,25 @@ Ejecutan rápidamente en la JVM local sin necesitar un emulador.
 - ✅ Manejo de errores en creación
 - ✅ Limpieza de mensajes de error
 - ✅ Reseteo completo del formulario
+
+**Tecnologías:**
+- JUnit 4
+- MockK (mocking)
+- Kotlin Coroutines Test
+- InstantTaskExecutorRule (LiveData/StateFlow)
+
+#### `AddTrackViewModelTest.kt`
+**Objetivo:** Verificar la lógica de agregar tracks a un álbum y validación de formulario.
+
+**Pruebas incluidas:**
+- ✅ Estado inicial vacío
+- ✅ Actualización de campos (nombre, duración, número, compositor)
+- ✅ Validación de campos obligatorios (nombre)
+- ✅ Conversión correcta de duración (MM:SS, HH:MM:SS) a segundos
+- ✅ Manejo de campos opcionales
+- ✅ Creación exitosa emite Loading → Success
+- ✅ Manejo de errores en creación
+- ✅ Limpieza de estados de éxito
 
 **Tecnologías:**
 - JUnit 4
@@ -224,6 +244,22 @@ Requieren un emulador o dispositivo Android.
 - Compose UI Testing
 - JUnit 4
 
+#### `AddTrackScreenTest.kt`
+**Objetivo:** Verificar componentes del formulario de agregar tracks.
+
+**Pruebas incluidas:**
+- ✅ Renderizado de todos los campos del formulario
+- ✅ Habilitación del botón Guardar según validación
+- ✅ Input de texto en campos
+- ✅ Validación de input numérico en campo de pista (solo dígitos)
+- ✅ Visualización de hints de formato de duración
+- ✅ Navegación con botones Volver y Cancelar
+- ✅ Mensajes de error para campos obligatorios
+
+**Tecnologías:**
+- Compose UI Testing
+- JUnit 4
+
 #### `AlbumDetailScreenTest.kt`
 **Objetivo:** Verificar componentes individuales de Compose para el detalle de álbum.
 
@@ -307,6 +343,23 @@ Verifican el flujo completo de la aplicación.
 - ✅ Dropdowns muestran opciones correctas
 - ✅ Botón de retroceso navega hacia atrás
 - ✅ Campo fecha muestra hint de formato
+
+**Tecnologías:**
+- Hilt Android Testing (inyección de dependencias)
+- Compose UI Testing
+- Espresso
+- JUnit 4
+
+#### `AddTrackE2ETest.kt`
+**Objetivo:** Probar el flujo completo de agregar tracks a un álbum.
+
+**Pruebas incluidas:**
+- ✅ Apertura correcta de la pantalla con todos los campos
+- ✅ Llenado completo del formulario
+- ✅ Llenado parcial (solo obligatorios)
+- ✅ Verificación de estado del botón Guardar
+- ✅ Navegación de retorno y cancelación
+- ✅ Validaciones visuales de hints y errores
 
 **Tecnologías:**
 - Hilt Android Testing (inyección de dependencias)
@@ -500,6 +553,7 @@ app/build/reports/coverage/test/debug/index.html
 | **Álbumes - Listar** | ✅ | ✅ | ✅ | Completo |
 | **Álbumes - Crear** | ✅ | ✅ | ✅ | Completo |
 | **Álbumes - Detalle** | ✅ | ✅ | ✅ | Completo |
+| **Álbumes - Agregar Track** | ✅ | ✅ | ✅ | Completo |
 | **Artistas - Listar** | ✅ | ✅ | ✅ | Completo |
 | **Artistas - Detalle** | ✅ | ✅ | ✅ | Completo |
 | **Coleccionistas - Listar** | ✅ | ✅ | ✅ | Completo |
@@ -507,8 +561,8 @@ app/build/reports/coverage/test/debug/index.html
 
 ### Totales
 
-- **Pruebas Unitarias:** 8 archivos
-- **Pruebas UI:** 6 archivos
-- **Pruebas E2E:** 6 archivos
+- **Pruebas Unitarias:** 9 archivos
+- **Pruebas UI:** 7 archivos
+- **Pruebas E2E:** 7 archivos
 - **Pruebas de Reconocimiento:** 1 archivo (Ripper)
-- **Total de archivos de prueba:** 21 archivos
+- **Total de archivos de prueba:** 24 archivos
