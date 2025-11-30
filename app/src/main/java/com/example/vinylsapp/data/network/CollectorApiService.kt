@@ -3,11 +3,12 @@ package com.example.vinylsapp.data.network
 import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 /**
  * Service Adapter Pattern: Interface de Retrofit para el API de coleccionistas
  */
-fun interface CollectorApiService {
+interface CollectorApiService {
 
     /**
      * Obtiene el listado de coleccionistas
@@ -15,6 +16,15 @@ fun interface CollectorApiService {
      */
     @GET("collectors")
     suspend fun getCollectors(): Response<List<CollectorDto>>
+
+    /**
+     * Obtiene el detalle de un coleccionista
+     * Endpoint: GET /collectors/:collectorId
+     */
+    @GET("collectors/{collectorId}")
+    suspend fun getCollectorDetail(
+        @Path("collectorId") collectorId: Int
+    ): Response<CollectorDto>
 }
 
 /**

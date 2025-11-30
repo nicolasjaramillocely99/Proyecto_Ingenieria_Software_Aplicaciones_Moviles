@@ -27,7 +27,7 @@ import com.example.vinylsapp.ui.albums.AddTrackViewModel
 import com.example.vinylsapp.ui.artists.ArtistListScreen
 import com.example.vinylsapp.ui.collectors.CollectorListScreen
 import com.example.vinylsapp.ui.artists.ArtistDetailScreen
-
+import com.example.vinylsapp.ui.collectors.CollectorDetailScreen
 
 /**
  * Composable principal que gestiona la navegación de la aplicación
@@ -83,14 +83,18 @@ fun VinylsApp() {
 
             // Pantalla de coleccionistas
             composable(Screen.Collectors.route) {
-                CollectorListScreen()
+                CollectorListScreen(
+                    onCollectorClick = { collectorId ->
+                        navController.navigate(Screen.CollectorDetail.createRoute(collectorId))
+                    }
+                )
             }
 
             // Pantalla de mi colección (placeholder)
             composable(Screen.MyCollection.route) {
                 PlaceholderScreen(title = Screen.MyCollection.title)
             }
-            
+
             // Pantalla de detalle de álbum
             composable(
                 route = Screen.AlbumDetail.route,
@@ -147,7 +151,7 @@ fun VinylsApp() {
                     }
                 )
             }
-            
+
             // Pantalla de agregar track
             composable(
                 route = Screen.AddTrack.route,
@@ -159,7 +163,7 @@ fun VinylsApp() {
             ) { backStackEntry ->
                 val viewModel: AddTrackViewModel = hiltViewModel(backStackEntry)
                 val albumId = backStackEntry.arguments?.getInt("albumId") ?: 0
-                
+
                 AddTrackScreen(
                     viewModel = viewModel,
                     onNavigateBack = {
@@ -170,6 +174,23 @@ fun VinylsApp() {
                         // Usar previousBackStackEntry que debería ser AlbumDetail
                         navController.previousBackStackEntry?.savedStateHandle?.set("track_created", true)
                         navController.popBackStack()
+                    }
+                )
+            }
+
+            // Pantalla de detalle de coleccionista
+            composable(
+                route = Screen.CollectorDetail.route,
+                arguments = listOf(
+                    navArgument("collectorId") {
+                        type = NavType.IntType
+                    }
+                )
+            ) { backStackEntry ->
+                CollectorDetailScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onAlbumClick = { albumId ->
+                        navController.navigate(Screen.AlbumDetail.createRoute(albumId))
                     }
                 )
             }
@@ -184,7 +205,7 @@ fun VinylsApp() {
 fun BottomNavigationBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    
+
     NavigationBar {
         bottomNavScreens.forEach { screen ->
             NavigationBarItem(
@@ -195,7 +216,14 @@ fun BottomNavigationBar(navController: NavHostController) {
                     )
                 },
                 label = { Text(screen.title) },
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                selected = when (screen) {
+                    Screen.Collectors -> currentDestination?.hierarchy?.any {
+                        val route = it.route ?: return@any false
+                        route.startsWith(Screen.Collectors.route)
+                    } == true || currentDestination?.route?.startsWith("collectors/") == true
+
+                    else -> currentDestination?.hierarchy?.any { it.route == screen.route } == true
+                },
                 onClick = {
                     navController.navigate(screen.route) {
                         // Pop toda la pila hasta el destino de inicio (Albums)

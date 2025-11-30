@@ -12,5 +12,15 @@ data class Collector(
     val shortBio: String = "",
     val totalAlbums: Int = 0,
     val telephone: String = "",
-    val email: String = ""
+    val email: String = "",
+    val favoriteGenres: List<String> = emptyList(),
+    val favoriteArtists: List<String> = emptyList(),
+    val featuredAlbums: List<FeaturedAlbum> = emptyList()
+)
+
+data class FeaturedAlbum(
+    val id: Int,
+    val title: String,
+    val artist: String,
+    val coverUrl: String
 )

@@ -68,6 +68,14 @@ sealed class Screen(
     ) {
         fun createRoute(albumId: Int) = "album/$albumId/add_track"
     }
+
+    object CollectorDetail : Screen(
+        route = "collectors/{collectorId}",
+        title = "Detalle del coleccionista",
+        icon = Icons.Default.Group
+    ) {
+        fun createRoute(collectorId: Int) = "collectors/$collectorId"
+    }
 }
 
 /**
