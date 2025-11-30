@@ -1,6 +1,6 @@
 # 🧪 Pruebas - Vinilos App
 
-Esta carpeta contiene todas las pruebas para las funcionalidades de **Álbumes** (listar, crear y detalle), **Artistas** (listar y detalle) y **Coleccionistas** (listar) de la aplicación Vinilos.
+Esta carpeta contiene todas las pruebas para las funcionalidades de **Álbumes** (listar, crear, detalle y agregar track), **Artistas** (listar y detalle) y **Coleccionistas** (listar y detalle) de la aplicación Vinilos.
 
 ## 📁 Estructura de Pruebas
 
@@ -17,11 +17,13 @@ app/src/
 │       │       └── ArtistRepositoryTest.kt    # Pruebas del Repository de Artistas
 │       └── ui/
 │           ├── albums/
-│           │   ├── AlbumViewModelTest.kt          # Pruebas del ViewModel (listar)
-│           │   ├── AlbumDetailViewModelTest.kt    # Pruebas del ViewModel (detalle)
-│           │   └── CreateAlbumViewModelTest.kt    # Pruebas del ViewModel (crear)
+│           │   ├── AlbumViewModelTest.kt              # Pruebas del ViewModel (listar)
+│           │   ├── AlbumDetailViewModelTest.kt        # Pruebas del ViewModel (detalle)
+│           │   ├── CreateAlbumViewModelTest.kt        # Pruebas del ViewModel (crear)
+│           │   └── AddTrackViewModelTest.kt           # Pruebas del ViewModel (agregar track)
 │           └── collectors/
-│               └── CollectorViewModelTest.kt      # Pruebas del ViewModel de Coleccionistas
+│               ├── CollectorViewModelTest.kt          # Pruebas del ViewModel de Coleccionistas (listar)
+│               └── CollectorDetailViewModelTest.kt    # Pruebas del ViewModel de detalle de Coleccionista
 │
 └── androidTest/                    # Pruebas de Instrumentación (Espresso + Compose)
     └── java/com/example/vinylsapp/
@@ -38,10 +40,13 @@ app/src/
             ├── albums/
             │   ├── AlbumListScreenTest.kt       # Pruebas UI de Álbumes (listar)
             │   ├── AlbumDetailScreenTest.kt     # Pruebas UI de Álbumes (detalle)
-            │   └── CreateAlbumScreenTest.kt     # Pruebas UI de Álbumes (crear)
-            └── artists/
-                ├── ArtistListScreenTest.kt      # Pruebas UI de Artistas (listar)
-                └── ArtistDetailScreenTest.kt    # Pruebas UI de Artistas (detalle)
+            │   ├── CreateAlbumScreenTest.kt     # Pruebas UI de Álbumes (crear)
+            │   └── AddTrackScreenTest.kt        # Pruebas UI de Álbumes (agregar track)
+            ├── artists/
+            │   ├── ArtistListScreenTest.kt      # Pruebas UI de Artistas (listar)
+            │   └── ArtistDetailScreenTest.kt    # Pruebas UI de Artistas (detalle)
+            └── collectors/
+                └── CollectorDetailScreenTest.kt # Pruebas UI de Coleccionistas (detalle)
 ```
 
 ---
@@ -169,20 +174,31 @@ Ejecutan rápidamente en la JVM local sin necesitar un emulador.
 - InstantTaskExecutorRule (LiveData/StateFlow)
 
 #### `CollectorViewModelTest.kt`
-**Objetivo:** Verificar la lógica de presentación y estados de UI para la lista de coleccionistas.
+**Objetivo:** Validar la carga y el manejo de errores en el listado de coleccionistas.
 
 **Pruebas incluidas:**
-- ✅ Carga automática al inicializar (init triggers loadCollectors)
-- ✅ Estado de Loading mientras el repositorio emite Loading
-- ✅ Actualización con coleccionistas cuando hay éxito
-- ✅ Actualización con error cuando el repositorio falla
-- ✅ Marcado como vacío cuando el repositorio retorna lista vacía
+- ✅ Emisión de estados Loading → Success
+- ✅ Manejo de errores y reintento
+- ✅ Verificación de datos mapeados correctamente
 
 **Tecnologías:**
 - JUnit 4
-- MockK (mocking)
+- MockK
 - Kotlin Coroutines Test
-- InstantTaskExecutorRule (LiveData/StateFlow)
+
+#### `CollectorDetailViewModelTest.kt`
+**Objetivo:** Verificar la obtención y mapeo del detalle de coleccionista (gustos, álbumes destacados y estados de UI).
+
+**Pruebas incluidas:**
+- ✅ Transición de Loading → Success con datos completos
+- ✅ Manejo de errores y acción de reintento
+- ✅ Estados vacíos para gustos/álbumes ausentes
+
+**Tecnologías:**
+- JUnit 4
+- MockK
+- Kotlin Coroutines Test
+- MainDispatcherRule
 
 ---
 
@@ -460,13 +476,13 @@ Desde Android Studio:
 
 
 4. **Ejecutar Ripper (Monkey Test):**
-   - Navega al archivo: `app/src/androidTest/java/com/example/vinylsapp/AutomaticRipperTest.kt`
-   - Haz clic derecho sobre la clase `AutomaticRipperTest` y selecciona **Run 'AutomaticRipperTest'**.
-   - En el test, una vez se abra la aplicacion, existe una espera configurada de 15 segundos para que cargue la interfaz, debido al retraso existente en la carga del back end al haberse empleado el free tier de firebase. 
-   - **Para ver el reporte de reconocimiento:**
-     1. Abre la pestaña **Logcat** en la parte inferior de Android Studio.
-     2. En el buscador del Logcat escribe: `tag:Ripper`.
-     3. Verás logs detallados como: `Reconocido [0]: Botón X` o `Acción: Clic en 'Guardar'`.
+    - Navega al archivo: `app/src/androidTest/java/com/example/vinylsapp/AutomaticRipperTest.kt`
+    - Haz clic derecho sobre la clase `AutomaticRipperTest` y selecciona **Run 'AutomaticRipperTest'**.
+    - En el test, una vez se abra la aplicacion, existe una espera configurada de 15 segundos para que cargue la interfaz, debido al retraso existente en la carga del back end al haberse empleado el free tier de firebase.
+    - **Para ver el reporte de reconocimiento:**
+        1. Abre la pestaña **Logcat** en la parte inferior de Android Studio.
+        2. En el buscador del Logcat escribe: `tag:Ripper`.
+        3. Verás logs detallados como: `Reconocido [0]: Botón X` o `Acción: Clic en 'Guardar'`.
 
 **Resultado esperado:** La aplicación se abrirá en el emulador y comenzará a navegar autónomamente. El test finalizará en **verde (PASS)** si logra completar 50 interacciones sin que la aplicación se cierre inesperadamente (crash).
 
@@ -540,7 +556,7 @@ app/build/reports/coverage/test/debug/index.html
 ```
 
 
-**Última actualización:** 16 Noviembre 2025
+**Última actualización:** 30 Noviembre 2025
 
 ---
 
@@ -557,12 +573,13 @@ app/build/reports/coverage/test/debug/index.html
 | **Artistas - Listar** | ✅ | ✅ | ✅ | Completo |
 | **Artistas - Detalle** | ✅ | ✅ | ✅ | Completo |
 | **Coleccionistas - Listar** | ✅ | ✅ | ✅ | Completo |
+| **Coleccionistas - Detalle** | ✅ | ✅ | - | Parcial |
 | **Exploración Automática (Ripper)** | - | - | ✅ | Completo |
 
 ### Totales
 
-- **Pruebas Unitarias:** 9 archivos
+- **Pruebas Unitarias:** 10 archivos
 - **Pruebas UI:** 7 archivos
 - **Pruebas E2E:** 7 archivos
 - **Pruebas de Reconocimiento:** 1 archivo (Ripper)
-- **Total de archivos de prueba:** 24 archivos
+- **Total de archivos de prueba:** 25 archivos
