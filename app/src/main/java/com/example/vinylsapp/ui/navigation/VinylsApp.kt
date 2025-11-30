@@ -53,9 +53,9 @@ fun VinylsApp() {
 
                 // Recargar álbumes si se creó uno nuevo
                 androidx.compose.runtime.LaunchedEffect(
-                    backStackEntry.savedStateHandle["album_created"]
+                    backStackEntry.savedStateHandle.get<Boolean>("album_created")
                 ) {
-                    if (backStackEntry.savedStateHandle["album_created"] == true) {
+                    if (backStackEntry.savedStateHandle.get<Boolean>("album_created") == true) {
                         viewModel.loadAlbums()
                         backStackEntry.savedStateHandle.remove<Boolean>("album_created")
                     }
