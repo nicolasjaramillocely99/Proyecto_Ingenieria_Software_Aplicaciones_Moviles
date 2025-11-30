@@ -26,7 +26,7 @@ class AddTrackViewModel @Inject constructor(
 ) : ViewModel() {
     
     // Obtener el ID del álbum desde los argumentos de navegación
-    private val albumId: Int = savedStateHandle.get<Int>("albumId") ?: 0
+    private val albumId: Int = savedStateHandle["albumId"] ?: 0
     
     // Estado privado mutable
     private val _uiState = MutableStateFlow(AddTrackUiState())

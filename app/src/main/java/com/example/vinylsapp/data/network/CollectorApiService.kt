@@ -7,7 +7,7 @@ import retrofit2.http.GET
 /**
  * Service Adapter Pattern: Interface de Retrofit para el API de coleccionistas
  */
-interface CollectorApiService {
+fun interface CollectorApiService {
 
     /**
      * Obtiene el listado de coleccionistas
